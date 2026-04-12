@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "Node.hpp"
+#include "resident_node.hpp"
 
 // the linked list class, holds all the resident nodes
 class LinkedList {
