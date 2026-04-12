@@ -1,5 +1,5 @@
 # 📊 Comparative Analysis of Arrays and Singly Linked Lists  
-## Urban Carbon Emission Data System (CT077-3-2-DSTR Lab Work #1)
+## Urban Carbon Emission Data System 
 
 ---
 
@@ -139,5 +139,5 @@ Project Folder/
 
 ## 👨‍💻 Authors
 CT077-3-2-DSTR Group Project  
-Sirin Aktas
-Ahmed Seddiq
+-Sirin Aktas
+-Ahmed Seddiq
