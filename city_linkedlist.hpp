@@ -7,6 +7,8 @@ class LinkedList {
 private:
     Node* head;  // first node
     int   count; // how many nodes are in here
+    std::string sourceFilename; // remembers where to save
+    std::string csvHeader;      // remembers original csv header
 
 public:
     // setup and cleanup
@@ -33,6 +35,8 @@ public:
 
     // reads the csv and loads everything in
     bool loadFromCSV(const std::string& filename);
+    // saves the current memory list back to the csv file
+    bool saveToCSV() const;
 
     // sorting, all bubble sort so O(n^2)
     void sortByAge();

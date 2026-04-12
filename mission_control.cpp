@@ -149,7 +149,7 @@ void sortMenu(LinkedList& city) {
 }
 
 // search submenu, shared between all cities
-void searchMenu(LinkedList& city) {
+void searchMenu(char cityPrefix, LinkedList& city) {
     cout << "\n  Search by:\n";
     cout << "  [1] Age Group (range)\n";
     cout << "  [2] Mode of Transport\n";
@@ -164,10 +164,7 @@ void searchMenu(LinkedList& city) {
         city.linearSearchByAgeGroup(minA, maxA);
 
     } else if (choice == 2) {
-        string mode;
-        cin.ignore();
-        cout << "  Enter mode (Car / Bus / Bicycle / Walking / School Bus / Carpool): ";
-        getline(cin, mode);
+        string mode = getValidMode(cityPrefix);
         city.linearSearchByMode(mode);
 
     } else if (choice == 3) {
@@ -228,6 +225,7 @@ void cityAMenu(LinkedList& cityA) {
             case 2: // add to front
                 collectResidentData('A', id, age, mode, dist, emFactor, days);
                 cityA.insertAtBeginning(id, age, mode, dist, emFactor, days);
+                cityA.saveToCSV();
                 break;
 
             case 3: // add to back
@@ -237,6 +235,7 @@ void cityAMenu(LinkedList& cityA) {
                 if (cityA.size() > oldSize) {
                     cout << "  Resident " << id << " inserted at end (position "
                          << cityA.size() << ").\n";
+                    cityA.saveToCSV();
                 }
                 break;
 
@@ -245,25 +244,27 @@ void cityAMenu(LinkedList& cityA) {
                 pos = getValidIntInput("  Enter position (1 = head): ");
                 collectResidentData('A', id, age, mode, dist, emFactor, days);
                 cityA.insertAtPosition(pos, id, age, mode, dist, emFactor, days);
+                cityA.saveToCSV();
                 break;
 
             case 5: // remove someone
-                cin.ignore();
                 cout << "  Enter Resident ID to delete: "; getline(cin, id);
-                cityA.deleteResident(id);
+                if (cityA.deleteResident(id)) cityA.saveToCSV();
                 break;
 
             case 6: // flip the list
                 cityA.reverse();
                 cityA.display();
+                cityA.saveToCSV();
                 break;
 
             case 7: // sort stuff
                 sortMenu(cityA);
+                cityA.saveToCSV();
                 break;
 
             case 8: // search stuff
-                searchMenu(cityA);
+                searchMenu('A', cityA);
                 break;
 
             case 9: // carbon numbers
@@ -305,6 +306,7 @@ void cityBMenu(LinkedList& cityB) {
             case 2:
                 collectResidentData('B', id, age, mode, dist, emFactor, days);
                 cityB.insertAtBeginning(id, age, mode, dist, emFactor, days);
+                cityB.saveToCSV();
                 break;
 
             case 3:
@@ -314,6 +316,7 @@ void cityBMenu(LinkedList& cityB) {
                 if (cityB.size() > oldSize) {
                     cout << "  Resident " << id << " inserted at end (position "
                          << cityB.size() << ").\n";
+                    cityB.saveToCSV();
                 }
                 break;
 
@@ -322,25 +325,27 @@ void cityBMenu(LinkedList& cityB) {
                 pos = getValidIntInput("  Enter position (1 = head): ");
                 collectResidentData('B', id, age, mode, dist, emFactor, days);
                 cityB.insertAtPosition(pos, id, age, mode, dist, emFactor, days);
+                cityB.saveToCSV();
                 break;
 
             case 5:
-                cin.ignore();
                 cout << "  Enter Resident ID to delete: "; getline(cin, id);
-                cityB.deleteResident(id);
+                if (cityB.deleteResident(id)) cityB.saveToCSV();
                 break;
 
             case 6:
                 cityB.reverse();
                 cityB.display();
+                cityB.saveToCSV();
                 break;
 
             case 7:
                 sortMenu(cityB);
+                cityB.saveToCSV();
                 break;
 
             case 8:
-                searchMenu(cityB);
+                searchMenu('B', cityB);
                 break;
 
             case 9:
@@ -382,6 +387,7 @@ void cityCMenu(LinkedList& cityC) {
             case 2:
                 collectResidentData('C', id, age, mode, dist, emFactor, days);
                 cityC.insertAtBeginning(id, age, mode, dist, emFactor, days);
+                cityC.saveToCSV();
                 break;
 
             case 3:
@@ -391,6 +397,7 @@ void cityCMenu(LinkedList& cityC) {
                 if (cityC.size() > oldSize) {
                     cout << "  Resident " << id << " inserted at end (position "
                          << cityC.size() << ").\n";
+                    cityC.saveToCSV();
                 }
                 break;
 
@@ -399,25 +406,27 @@ void cityCMenu(LinkedList& cityC) {
                 pos = getValidIntInput("  Enter position (1 = head): ");
                 collectResidentData('C', id, age, mode, dist, emFactor, days);
                 cityC.insertAtPosition(pos, id, age, mode, dist, emFactor, days);
+                cityC.saveToCSV();
                 break;
 
             case 5:
-                cin.ignore();
                 cout << "  Enter Resident ID to delete: "; getline(cin, id);
-                cityC.deleteResident(id);
+                if (cityC.deleteResident(id)) cityC.saveToCSV();
                 break;
 
             case 6:
                 cityC.reverse();
                 cityC.display();
+                cityC.saveToCSV();
                 break;
 
             case 7:
                 sortMenu(cityC);
+                cityC.saveToCSV();
                 break;
 
             case 8:
-                searchMenu(cityC);
+                searchMenu('C', cityC);
                 break;
 
             case 9:

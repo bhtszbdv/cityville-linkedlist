@@ -175,6 +175,7 @@ void LinkedList::reverse() {
 
 // read data from the csv file and load into the list
 bool LinkedList::loadFromCSV(const string& filename) {
+    sourceFilename = filename;
     ifstream file(filename);
     if (!file.is_open()) {
         cout << "  [ERROR] Cannot open file: " << filename << "\n";
@@ -182,7 +183,7 @@ bool LinkedList::loadFromCSV(const string& filename) {
     }
 
     string line;
-    getline(file, line); // skip the header row
+    getline(file, csvHeader); // save the header row so we can restore it when saving
 
     int loaded = 0;
     while (getline(file, line)) {
@@ -224,6 +225,37 @@ bool LinkedList::loadFromCSV(const string& filename) {
     }
     file.close();
     cout << "  Loaded " << loaded << " records from " << filename << "\n";
+    return true;
+}
+
+// push the current linked list completely back into the csv file
+bool LinkedList::saveToCSV() const {
+    if (sourceFilename.empty()) return false;
+    ofstream file(sourceFilename);
+    if (!file.is_open()) {
+        cout << "  [ERROR] Could not open file for writing: " << sourceFilename << "\n";
+        return false;
+    }
+
+    // write the original header block we saved
+    if (!csvHeader.empty()) file << csvHeader << "\n";
+    else file << "ResidentID,Age,ModeOfTransport,DailyDistance,CarbonEmissionFactor,AverageDayPerMonth\n";
+
+    int saved = 0;
+    Node* cur = head;
+    while (cur) {
+        file << cur->residentID << ","
+             << cur->age << ","
+             << cur->mode << ","
+             << cur->distance << ","
+             << cur->emissionFactor << ","
+             << cur->days << "\n";
+        cur = cur->next;
+        saved++;
+    }
+
+    file.close();
+    // No print here, we will let mission_control print the success message
     return true;
 }
 
