@@ -2,47 +2,60 @@
 #include <string>
 #include "Node.hpp"
 
+// the linked list class, holds all the resident nodes
 class LinkedList {
 private:
-    Node* head;
-    int   count;
+    Node* head;  // first node
+    int   count; // how many nodes are in here
 
 public:
-    // ── Lifecycle ──────────────────────────────────────────────
+    // setup and cleanup
     LinkedList();
     ~LinkedList();
 
-    // ── Basic operations ───────────────────────────────────────
+    // insert at the end (used when loading from csv)
     void insert(const std::string& id, int age, const std::string& mode,
                 double distance, double emFactor, int days);
+    // insert at the very front
+    void insertAtBeginning(const std::string& id, int age, const std::string& mode,
+                           double distance, double emFactor, int days);
+    // insert somewhere in the middle, position starts at 1
+    void insertAtPosition(int pos, const std::string& id, int age, const std::string& mode,
+                          double distance, double emFactor, int days);
+    // remove a node by resident id
+    bool deleteResident(const std::string& id);
+    // flip the whole list
+    void reverse();
+
     void display() const;
     int  size()    const { return count; }
     void clear();
 
-    // ── File I/O ───────────────────────────────────────────────
+    // reads the csv and loads everything in
     bool loadFromCSV(const std::string& filename);
 
-    // ── Sorting (Bubble Sort – O(n²)) ─────────────────────────
+    // sorting, all bubble sort so O(n^2)
     void sortByAge();
     void sortByDistance();
     void sortByEmission();
 
-    // ── Searching ─────────────────────────────────────────────
-    // Linear search on any list
+    // linear search options
     void linearSearchByAgeGroup(int minAge, int maxAge) const;
     void linearSearchByMode(const std::string& mode)     const;
     void linearSearchByDistanceThreshold(double minKm)   const;
 
-    // Binary search – list MUST be sorted by age first
+    // binary search, list needs to be sorted by age first
     void binarySearchByAge(int targetAge) const;
 
-    // ── Analysis ──────────────────────────────────────────────
-    void carbonAnalysis()   const;  // total + per mode
-    void ageGroupAnalysis() const;  // per group: preferred mode, totals, avg
+    // analysis functions
+    void carbonAnalysis()   const;
+    void ageGroupAnalysis() const;
 
 private:
-    // Helper: get age-group label
+    // returns the age group label for a given age
     static std::string ageGroupLabel(int age);
-    // Helper: swap data between two nodes (keeps pointers intact)
+    // swaps data between two nodes without touching the pointers
     static void swapData(Node* a, Node* b);
+    // checks if an id is already in the list
+    bool idExists(const std::string& id) const;
 };

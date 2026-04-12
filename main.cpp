@@ -1,69 +1,107 @@
-// ============================================================
-//  main.cpp  –  CityVille Carbon Analysis System
-//               LINKED LIST VERSION
-//  Datasets: City A (dataset1-cityA.csv)
-//            City B (dataset2-cityB.csv)
-//            City C (dataset3-cityC.csv)  [handled by teammate]
-// ============================================================
+// main.cpp - this is where everything starts i guess
 #include <iostream>
+#include <string>
 #include "LinkedList.hpp"
 using namespace std;
 
-// Forward declarations
+// need these so the functions below can find each other
 void cityAMenu(LinkedList& cityA);
 void cityBMenu(LinkedList& cityB);
 void cityCMenu();
 void compareCities(const LinkedList& cityA, const LinkedList& cityB);
 
-// ─────────────────────────────────────────────────────────────
-//  Main Menu
-// ─────────────────────────────────────────────────────────────
-void displayMainMenu() {
-    cout << "\n============================================\n";
-    cout << "     CITYVILLE CARBON ANALYSIS SYSTEM\n";
-    cout << "           (LINKED LIST VERSION)\n";
-    cout << "============================================\n";
-    cout << "\nSelect an option:\n";
-    cout << "1. City A (Metropolitan City)\n";
-    cout << "2. City B (University Town)\n";
-    cout << "3. City C (Suburban / Rural Area)\n";
-    cout << "\n4. Compare Cities A & B\n";
-    cout << "0. Exit\n";
-    cout << "\nEnter your choice: ";
+// only accept valid transport modes, no random text or numbers
+string getValidMode() {
+    // the 6 valid options, properly spelled
+    const string MODES[] = {
+        "Car", "Bus", "Bicycle", "Walking", "School Bus", "Carpool"
+    };
+    const int MODE_COUNT = 6;
+
+    while (true) {
+        cout << "  Select Mode of Transport:\n";
+        for (int i = 0; i < MODE_COUNT; ++i)
+            cout << "    [" << (i + 1) << "] " << MODES[i] << "\n";
+        cout << "  Your choice (number or name): ";
+
+        string input;
+        getline(cin, input);
+
+        // remove spaces at front and back
+        size_t s = input.find_first_not_of(" \t");
+        size_t e = input.find_last_not_of(" \t");
+        if (s == string::npos) { cout << "  [ERROR] Input cannot be empty.\n"; continue; }
+        input = input.substr(s, e - s + 1);
+
+        // check if they typed a number like 1-6
+        bool isNumber = !input.empty();
+        for (char c : input) if (!isdigit(c)) { isNumber = false; break; }
+        if (isNumber) {
+            int idx = stoi(input);
+            if (idx >= 1 && idx <= MODE_COUNT)
+                return MODES[idx - 1];
+            cout << "  [ERROR] Please enter a number between 1 and "
+                 << MODE_COUNT << ".\n";
+            continue;
+        }
+
+        // check if they typed the name instead, ignore uppercase/lowercase
+        string lower = input;
+        for (char& c : lower) c = (char)tolower(c);
+
+        for (int i = 0; i < MODE_COUNT; ++i) {
+            string cmp = MODES[i];
+            for (char& c : cmp) c = (char)tolower(c);
+            if (lower == cmp)
+                return MODES[i]; // give back the properly capitalised version
+        }
+
+        cout << "  [ERROR] \"" << input << "\" is not a valid mode.\n"
+             << "  Valid options: Car, Bus, Bicycle, Walking, School Bus, Carpool\n";
+    }
 }
 
-// ─────────────────────────────────────────────────────────────
-//  Sort Sub-Menu  (reused by both cities)
-// ─────────────────────────────────────────────────────────────
+// ask user to fill in all the resident info
+void collectResidentData(string& id, int& age, string& mode,
+                         double& dist, double& emFactor, int& days) {
+    cin.ignore();
+    cout << "  Resident ID            : "; getline(cin, id);
+    cout << "  Age                    : "; cin >> age;
+    cin.ignore();
+    mode = getValidMode();
+    cout << "  Daily Distance (km)    : "; cin >> dist;
+    cout << "  Emission Factor (kg/km): "; cin >> emFactor;
+    cout << "  Days per Month         : "; cin >> days;
+}
+
+// sort submenu, used by both city A and B
 void sortMenu(LinkedList& city) {
     int choice;
-    cout << "\n  --- Sort Menu ---\n";
-    cout << "  1. Sort by Age\n";
-    cout << "  2. Sort by Daily Distance\n";
-    cout << "  3. Sort by Total Carbon Emission\n";
+    cout << "\n  Sort by:\n";
+    cout << "  [1] Age\n";
+    cout << "  [2] Daily Distance\n";
+    cout << "  [3] Total Carbon Emission\n";
     cout << "  Enter choice: ";
-    cin  >> choice;
+    cin >> choice;
 
     switch (choice) {
         case 1: city.sortByAge();       city.display(); break;
         case 2: city.sortByDistance();  city.display(); break;
         case 3: city.sortByEmission();  city.display(); break;
-        default: cout << "  Invalid.\n";
+        default: cout << "  Invalid choice.\n";
     }
 }
 
-// ─────────────────────────────────────────────────────────────
-//  Search Sub-Menu  (reused by both cities)
-// ─────────────────────────────────────────────────────────────
+// search submenu, also shared between cities
 void searchMenu(LinkedList& city) {
     int choice;
-    cout << "\n  --- Search Menu ---\n";
-    cout << "  1. Linear Search by Age Group\n";
-    cout << "  2. Linear Search by Mode of Transport\n";
-    cout << "  3. Linear Search by Distance Threshold (> X km)\n";
-    cout << "  4. Binary Search by Exact Age  (sort by age first!)\n";
+    cout << "\n  Search by:\n";
+    cout << "  [1] Age Group (range)\n";
+    cout << "  [2] Mode of Transport\n";
+    cout << "  [3] Distance Threshold (> X km)\n";
+    cout << "  [4] Exact Age - Binary Search (sort by age first!)\n";
     cout << "  Enter choice: ";
-    cin  >> choice;
+    cin >> choice;
 
     if (choice == 1) {
         int minA, maxA;
@@ -85,7 +123,7 @@ void searchMenu(LinkedList& city) {
 
     } else if (choice == 4) {
         int age;
-        cout << "  Enter exact age to search: "; cin >> age;
+        cout << "  Enter exact age: "; cin >> age;
         city.binarySearchByAge(age);
 
     } else {
@@ -93,107 +131,189 @@ void searchMenu(LinkedList& city) {
     }
 }
 
-// ─────────────────────────────────────────────────────────────
-//  Add Resident helper
-// ─────────────────────────────────────────────────────────────
-void addResident(LinkedList& city) {
-    string id, mode;
-    int age, days;
-    double dist, emFactor;
-
-    cin.ignore();
-    cout << "  Resident ID     : "; getline(cin, id);
-    cout << "  Age             : "; cin >> age;
-    cin.ignore();
-    cout << "  Mode of Transport: "; getline(cin, mode);
-    cout << "  Daily Distance (km): "; cin >> dist;
-    cout << "  Emission Factor (kg CO2/km): "; cin >> emFactor;
-    cout << "  Days per Month  : "; cin >> days;
-
-    city.insert(id, age, mode, dist, emFactor, days);
-    cout << "  Resident " << id << " added successfully.\n";
+// prints the menu box for whichever city we pass in
+void printCityMenu(const string& cityName) {
+    cout << "\n==================================================\n";
+    cout << "                CITY " << cityName << " MENU\n";
+    cout << "==================================================\n";
+    cout << "\n--- Data Viewing ---\n";
+    cout << "[1]  View All Residents\n";
+    cout << "\n--- Linked List Operations ---\n";
+    cout << "[2]  Insert at Beginning\n";
+    cout << "[3]  Insert at End\n";
+    cout << "[4]  Insert at Specific Position\n";
+    cout << "[5]  Delete a Resident\n";
+    cout << "[6]  Reverse Linked List\n";
+    cout << "\n--- Data Processing ---\n";
+    cout << "[7]  Sort Data  (Age / Distance / Emission)\n";
+    cout << "[8]  Search Data  (Age / Mode / Distance)\n";
+    cout << "\n--- Analysis ---\n";
+    cout << "[9]  Carbon Emission Analysis\n";
+    cout << "[10] Age Group Analysis\n";
+    cout << "\n--------------------------------------------------\n";
+    cout << "\n[11] Back to Main Menu\n";
+    cout << "[0]  Exit Program\n";
+    cout << "\n==================================================\n";
+    cout << "Enter your choice (0-11): ";
 }
 
-// ─────────────────────────────────────────────────────────────
-//  City A Menu
-// ─────────────────────────────────────────────────────────────
+// city A menu loop
 void cityAMenu(LinkedList& cityA) {
     int choice;
     do {
-        cout << "\n============================================\n";
-        cout << "              CITY A MENU\n";
-        cout << "============================================\n";
-        cout << "1. View Data\n";
-        cout << "2. Add Resident\n";
-        cout << "3. Sort Data\n";
-        cout << "4. Search Data\n";
-        cout << "5. Carbon Analysis\n";
-        cout << "6. Age Group Analysis\n";
-        cout << "9. Back to Main Menu\n";
-        cout << "0. Exit Program\n";
-        cout << "\nEnter your choice: ";
-        cin  >> choice;
+        printCityMenu("A");
+        cin >> choice;
+
+        string id, mode;
+        int age, days, pos;
+        double dist, emFactor;
 
         switch (choice) {
-            case 1: cityA.display();          break;
-            case 2: addResident(cityA);       break;
-            case 3: sortMenu(cityA);          break;
-            case 4: searchMenu(cityA);        break;
-            case 5: cityA.carbonAnalysis();   break;
-            case 6: cityA.ageGroupAnalysis(); break;
-            case 9: return;
-            case 0: exit(0);
-            default: cout << "Invalid choice!\n";
+            case 1: // show all
+                cityA.display();
+                break;
+
+            case 2: // add to front
+                collectResidentData(id, age, mode, dist, emFactor, days);
+                cityA.insertAtBeginning(id, age, mode, dist, emFactor, days);
+                break;
+
+            case 3: // add to back
+                collectResidentData(id, age, mode, dist, emFactor, days);
+                cityA.insert(id, age, mode, dist, emFactor, days);
+                cout << "  Resident " << id << " inserted at end (position "
+                     << cityA.size() << ").\n";
+                break;
+
+            case 4: // add at a specific spot
+                cout << "  Current list size: " << cityA.size() << "\n";
+                cout << "  Enter position (1 = head): "; cin >> pos;
+                collectResidentData(id, age, mode, dist, emFactor, days);
+                cityA.insertAtPosition(pos, id, age, mode, dist, emFactor, days);
+                break;
+
+            case 5: // remove someone
+                cin.ignore();
+                cout << "  Enter Resident ID to delete: "; getline(cin, id);
+                cityA.deleteResident(id);
+                break;
+
+            case 6: // flip the list
+                cityA.reverse();
+                cityA.display();
+                break;
+
+            case 7: // sort stuff
+                sortMenu(cityA);
+                break;
+
+            case 8: // search stuff
+                searchMenu(cityA);
+                break;
+
+            case 9: // carbon numbers
+                cityA.carbonAnalysis();
+                break;
+
+            case 10: // age breakdown
+                cityA.ageGroupAnalysis();
+                break;
+
+            case 11: // go back
+                return;
+
+            case 0: // quit
+                cout << "\nGoodbye!\n";
+                exit(0);
+
+            default:
+                cout << "  Invalid choice! Please enter 0-11.\n";
         }
-    } while (choice != 9);
+    } while (true);
 }
 
-// ─────────────────────────────────────────────────────────────
-//  City B Menu
-// ─────────────────────────────────────────────────────────────
+// city B menu loop, basically the same as A
 void cityBMenu(LinkedList& cityB) {
     int choice;
     do {
-        cout << "\n============================================\n";
-        cout << "              CITY B MENU\n";
-        cout << "============================================\n";
-        cout << "1. View Data\n";
-        cout << "2. Add Resident\n";
-        cout << "3. Sort Data\n";
-        cout << "4. Search Data\n";
-        cout << "5. Carbon Analysis\n";
-        cout << "6. Age Group Analysis\n";
-        cout << "9. Back to Main Menu\n";
-        cout << "0. Exit Program\n";
-        cout << "\nEnter your choice: ";
-        cin  >> choice;
+        printCityMenu("B");
+        cin >> choice;
+
+        string id, mode;
+        int age, days, pos;
+        double dist, emFactor;
 
         switch (choice) {
-            case 1: cityB.display();          break;
-            case 2: addResident(cityB);       break;
-            case 3: sortMenu(cityB);          break;
-            case 4: searchMenu(cityB);        break;
-            case 5: cityB.carbonAnalysis();   break;
-            case 6: cityB.ageGroupAnalysis(); break;
-            case 9: return;
-            case 0: exit(0);
-            default: cout << "Invalid choice!\n";
+            case 1:
+                cityB.display();
+                break;
+
+            case 2:
+                collectResidentData(id, age, mode, dist, emFactor, days);
+                cityB.insertAtBeginning(id, age, mode, dist, emFactor, days);
+                break;
+
+            case 3:
+                collectResidentData(id, age, mode, dist, emFactor, days);
+                cityB.insert(id, age, mode, dist, emFactor, days);
+                cout << "  Resident " << id << " inserted at end (position "
+                     << cityB.size() << ").\n";
+                break;
+
+            case 4:
+                cout << "  Current list size: " << cityB.size() << "\n";
+                cout << "  Enter position (1 = head): "; cin >> pos;
+                collectResidentData(id, age, mode, dist, emFactor, days);
+                cityB.insertAtPosition(pos, id, age, mode, dist, emFactor, days);
+                break;
+
+            case 5:
+                cin.ignore();
+                cout << "  Enter Resident ID to delete: "; getline(cin, id);
+                cityB.deleteResident(id);
+                break;
+
+            case 6:
+                cityB.reverse();
+                cityB.display();
+                break;
+
+            case 7:
+                sortMenu(cityB);
+                break;
+
+            case 8:
+                searchMenu(cityB);
+                break;
+
+            case 9:
+                cityB.carbonAnalysis();
+                break;
+
+            case 10:
+                cityB.ageGroupAnalysis();
+                break;
+
+            case 11:
+                return;
+
+            case 0:
+                cout << "\nGoodbye!\n";
+                exit(0);
+
+            default:
+                cout << "  Invalid choice! Please enter 0-11.\n";
         }
-    } while (choice != 9);
+    } while (true);
 }
 
-// ─────────────────────────────────────────────────────────────
-//  City C Menu  (stub – for teammate)
-// ─────────────────────────────────────────────────────────────
+// city C is not our job
 void cityCMenu() {
     cout << "\n  City C is handled by another team member.\n";
 }
 
-// ─────────────────────────────────────────────────────────────
-//  Compare Cities A & B
-// ─────────────────────────────────────────────────────────────
+// show both cities side by side
 void compareCities(const LinkedList& cityA, const LinkedList& cityB) {
-    // Call each city's analysis so the user can see the tables side by side
     cout << "\n====================================================\n";
     cout << "  COMPARISON: CITY A vs CITY B\n";
     cout << "====================================================\n";
@@ -212,11 +332,23 @@ void compareCities(const LinkedList& cityA, const LinkedList& cityB) {
     cout << "====================================================\n";
 }
 
-// ─────────────────────────────────────────────────────────────
-//  main()
-// ─────────────────────────────────────────────────────────────
+// the main menu that shows first
+void displayMainMenu() {
+    cout << "\n==================================================\n";
+    cout << "       CITYVILLE CARBON ANALYSIS SYSTEM\n";
+    cout << "             (LINKED LIST VERSION)\n";
+    cout << "==================================================\n";
+    cout << "\n[1] City A  (Metropolitan City)\n";
+    cout << "[2] City B  (University Town)\n";
+    cout << "[3] City C  (Suburban / Rural Area)\n";
+    cout << "\n[4] Compare Cities A & B\n";
+    cout << "[0] Exit\n";
+    cout << "\n--------------------------------------------------\n";
+    cout << "Enter your choice: ";
+}
+
+// entry point
 int main() {
-    // Load datasets once at startup
     LinkedList cityA, cityB;
 
     cout << "\nLoading datasets...\n";
@@ -234,7 +366,7 @@ int main() {
             case 3: cityCMenu();                    break;
             case 4: compareCities(cityA, cityB);    break;
             case 0: cout << "\nGoodbye!\n";         break;
-            default: cout << "\nInvalid choice. Try again.\n";
+            default: cout << "\nInvalid choice. Please enter 0-4.\n";
         }
     } while (choice != 0);
 
