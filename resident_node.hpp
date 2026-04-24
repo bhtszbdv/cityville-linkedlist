@@ -1,17 +1,18 @@
 #pragma once
 #include <string>
 
-// one person in the city
+// represents one person/resident in the city
 struct Node {
-    std::string residentID;     // like A001 or B023
+    std::string residentID;     // e.g A001, B023 etc
     int         age;
-    std::string mode;           // how they get around
-    double      distance;       // km per day
-    double      emissionFactor; // how much co2 per km
-    int         days;           // days they travel per month
-    double      totalEmission;  // distance * factor * days, calculated on load
+    std::string mode;           // transport mode (car, bus..)
+    double      distance;       // daily km
+    double      emissionFactor; // co2 per km
+    int         days;           // how many days per month they travel
+    std::string ageGroup;       // "Working Adults (Early Career)" etc
+    double      totalEmission;  // either from csv or calculated when user adds manually
 
-    Node* next; // points to the next person in the list
+    Node* next; // pointer to next node
 
-    Node() : age(0), distance(0.0), emissionFactor(0.0), days(0), totalEmission(0.0), next(nullptr) {}
+    Node() : age(0), distance(0.0), emissionFactor(0.0), days(0), ageGroup(""), totalEmission(0.0), next(nullptr) {}
 };

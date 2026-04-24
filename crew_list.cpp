@@ -1,4 +1,4 @@
-// LinkedList.cpp - all the linked list stuff goes here
+  // crew_list.cpp - all the linked list logic is in here
 #include "city_linkedlist.hpp"
 #include <iostream>
 #include <fstream>
@@ -9,7 +9,7 @@
 #include <chrono>
 using namespace std;
 
-// constructor and destructor, nothing special
+    // nothing special in constructor/destructor just initialise head and count
 LinkedList::LinkedList() : head(nullptr), count(0) {}
 
 LinkedList::~LinkedList() { clear(); }
@@ -25,7 +25,7 @@ void LinkedList::clear() {
     count = 0;
 }
 
-// just walks the list and checks if the id is already there
+    // scan the list and check if the same id already exists
 bool LinkedList::idExists(const string& id) const {
     Node* cur = head;
     while (cur) {
@@ -35,9 +35,10 @@ bool LinkedList::idExists(const string& id) const {
     return false;
 }
 
-// add to the end of the list
+       // append new node at the end
 void LinkedList::insert(const string& id, int age, const string& mode,
-                        double distance, double emFactor, int days) {
+                        double distance, double emFactor, int days,
+                        const string& ageGroup, double totalEmission) {
     if (idExists(id)) {
         cout << "  [ERROR] Resident ID \"" << id << "\" already exists. Insert cancelled.\n";
         return;
@@ -49,7 +50,8 @@ void LinkedList::insert(const string& id, int age, const string& mode,
     newNode->distance       = distance;
     newNode->emissionFactor = emFactor;
     newNode->days           = days;
-    newNode->totalEmission  = distance * emFactor * days;
+    newNode->ageGroup       = ageGroup;
+    newNode->totalEmission  = totalEmission;
     newNode->next           = nullptr;
 
     if (!head) {
@@ -62,9 +64,10 @@ void LinkedList::insert(const string& id, int age, const string& mode,
     ++count;
 }
 
-// add to the front instead
+      // put the new node at the very beginning
 void LinkedList::insertAtBeginning(const string& id, int age, const string& mode,
-                                   double distance, double emFactor, int days) {
+                                   double distance, double emFactor, int days,
+                                   const string& ageGroup, double totalEmission) {
     if (idExists(id)) {
         cout << "  [ERROR] Resident ID \"" << id << "\" already exists. Insert cancelled.\n";
         return;
@@ -76,28 +79,30 @@ void LinkedList::insertAtBeginning(const string& id, int age, const string& mode
     newNode->distance       = distance;
     newNode->emissionFactor = emFactor;
     newNode->days           = days;
-    newNode->totalEmission  = distance * emFactor * days;
+    newNode->ageGroup       = ageGroup;
+    newNode->totalEmission  = totalEmission;
     newNode->next           = head;
     head = newNode;
     ++count;
     cout << "  Resident " << id << " inserted at the beginning.\n";
 }
 
-// add at a specific spot in the list, position starts at 1
+    // insert at a user-given position, 1 = head
 void LinkedList::insertAtPosition(int pos, const string& id, int age, const string& mode,
-                                  double distance, double emFactor, int days) {
+                                  double distance, double emFactor, int days,
+                                  const string& ageGroup, double totalEmission) {
     if (idExists(id)) {
         cout << "  [ERROR] Resident ID \"" << id << "\" already exists. Insert cancelled.\n";
         return;
     }
     if (pos <= 1) {
-        insertAtBeginning(id, age, mode, distance, emFactor, days);
+        insertAtBeginning(id, age, mode, distance, emFactor, days, ageGroup, totalEmission);
         return;
     }
     if (pos > count + 1) {
         cout << "  [WARN] Position " << pos << " is beyond list size (" << count
              << "). Inserting at end.\n";
-        insert(id, age, mode, distance, emFactor, days);
+        insert(id, age, mode, distance, emFactor, days, ageGroup, totalEmission);
         cout << "  Resident " << id << " inserted at end (position " << count << ").\n";
         return;
     }
@@ -109,7 +114,8 @@ void LinkedList::insertAtPosition(int pos, const string& id, int age, const stri
     newNode->distance       = distance;
     newNode->emissionFactor = emFactor;
     newNode->days           = days;
-    newNode->totalEmission  = distance * emFactor * days;
+    newNode->ageGroup       = ageGroup;
+    newNode->totalEmission  = totalEmission;
 
     Node* cur = head;
     for (int i = 1; i < pos - 1; ++i) cur = cur->next;
@@ -193,14 +199,16 @@ bool LinkedList::loadFromCSV(const string& filename) {
         if (!line.empty() && line.back() == '\r') line.pop_back();
 
         stringstream ss(line);
-        string id, ageStr, mode, distStr, emStr, daysStr;
+        string id, ageStr, mode, distStr, emStr, daysStr, ageGroup, totalEmStr;
 
-        getline(ss, id,      ',');
-        getline(ss, ageStr,  ',');
-        getline(ss, mode,    ',');
-        getline(ss, distStr, ',');
-        getline(ss, emStr,   ',');
-        getline(ss, daysStr, ',');
+        getline(ss, id,         ',');
+        getline(ss, ageStr,     ',');
+        getline(ss, mode,       ',');
+        getline(ss, distStr,    ',');
+        getline(ss, emStr,      ',');
+        getline(ss, daysStr,    ',');
+        getline(ss, ageGroup,   ',');  // column 7 - AgeGroup
+        getline(ss, totalEmStr, ',');  // column 8 - TotalMonthlyEmission
 
         // clean up any extra spaces
         auto trim = [](string& s) {
@@ -208,16 +216,25 @@ bool LinkedList::loadFromCSV(const string& filename) {
             size_t end   = s.find_last_not_of(" \t\r\n");
             s = (start == string::npos) ? "" : s.substr(start, end - start + 1);
         };
-        trim(id); trim(ageStr); trim(mode); trim(distStr); trim(emStr); trim(daysStr);
+        trim(id); trim(ageStr); trim(mode); trim(distStr);
+        trim(emStr); trim(daysStr); trim(ageGroup); trim(totalEmStr);
 
         if (id.empty()) continue;
 
         try {
-            int    age   = stoi(ageStr);
-            double dist  = stod(distStr);
-            double em    = stod(emStr);
-            int    days  = stoi(daysStr);
-            insert(id, age, mode, dist, em, days);
+            int    age      = stoi(ageStr);
+            double dist     = stod(distStr);
+            double em       = stod(emStr);
+            int    days     = stoi(daysStr);
+            // use TotalMonthlyEmission from CSV if present, otherwise compute it
+            double totalEm  = totalEmStr.empty() ? (dist * em * days) : stod(totalEmStr);
+            // use AgeGroup from CSV if present, otherwise derive it from age + city
+            if (ageGroup.empty()) {
+                // infer city prefix from the resident ID prefix (first char of id)
+                char cityPfx = (!id.empty()) ? (char)toupper(id[0]) : '\0';
+                ageGroup = ageGroupLabel(age, cityPfx);
+            }
+            insert(id, age, mode, dist, em, days, ageGroup, totalEm);
             ++loaded;
         } catch (...) {
             cout << "  [WARN] Skipping bad row: " << line << "\n";
@@ -239,17 +256,19 @@ bool LinkedList::saveToCSV() const {
 
     // write the original header block we saved
     if (!csvHeader.empty()) file << csvHeader << "\n";
-    else file << "ResidentID,Age,ModeOfTransport,DailyDistance,CarbonEmissionFactor,AverageDayPerMonth\n";
+    else file << "ResidentID,Age,ModeOfTransport,DailyDistance,CarbonEmissionFactor,AverageDayPerMonth,AgeGroup,TotalMonthlyEmission\n";
 
     int saved = 0;
     Node* cur = head;
     while (cur) {
-        file << cur->residentID << ","
-             << cur->age << ","
-             << cur->mode << ","
-             << cur->distance << ","
+        file << cur->residentID    << ","
+             << cur->age           << ","
+             << cur->mode          << ","
+             << cur->distance      << ","
              << cur->emissionFactor << ","
-             << cur->days << "\n";
+             << cur->days          << ","
+             << cur->ageGroup      << ","
+             << fixed << setprecision(2) << cur->totalEmission << "\n";
         cur = cur->next;
         saved++;
     }
@@ -267,28 +286,30 @@ void LinkedList::display() const {
     cout << left
          << setw(8)  << "ID"
          << setw(6)  << "Age"
+         << setw(36) << "Age Group"
          << setw(14) << "Mode"
-         << setw(12) << "Dist(km)"
-         << setw(14) << "EmFactor"
-         << setw(8)  << "Days"
+         << setw(10) << "Dist(km)"
+         << setw(12) << "EmFactor"
+         << setw(6)  << "Days"
          << setw(14) << "TotalEmis(kg)"
          << "\n";
-    cout << string(76, '-') << "\n";
+    cout << string(106, '-') << "\n";
 
     Node* cur = head;
     while (cur) {
         cout << left
              << setw(8)  << cur->residentID
              << setw(6)  << cur->age
+             << setw(36) << cur->ageGroup
              << setw(14) << cur->mode
-             << setw(12) << fixed << setprecision(1) << cur->distance
-             << setw(14) << fixed << setprecision(2) << cur->emissionFactor
-             << setw(8)  << cur->days
+             << setw(10) << fixed << setprecision(1) << cur->distance
+             << setw(12) << fixed << setprecision(2) << cur->emissionFactor
+             << setw(6)  << cur->days
              << setw(14) << fixed << setprecision(2) << cur->totalEmission
              << "\n";
         cur = cur->next;
     }
-    cout << string(76, '-') << "\n";
+    cout << string(106, '-') << "\n";
     cout << "  Total records: " << count << "\n";
 }
 
@@ -300,6 +321,7 @@ void LinkedList::swapData(Node* a, Node* b) {
     swap(a->distance,       b->distance);
     swap(a->emissionFactor, b->emissionFactor);
     swap(a->days,           b->days);
+    swap(a->ageGroup,       b->ageGroup);
     swap(a->totalEmission,  b->totalEmission);
 }
 
@@ -379,6 +401,145 @@ void LinkedList::sortByEmission() {
     cout << "\n  [Bubble Sort by Emission] Sorted " << count
          << " nodes in " << fixed << setprecision(4) << ms << " ms\n";
     cout << "  Time Complexity: O(n^2)  |  Space Complexity: O(1)  (in-place data swap)\n";
+}
+
+// insertion sort by age
+void LinkedList::insertionSortByAge() {
+    if (!head || !head->next) return;
+
+    auto start = chrono::high_resolution_clock::now();
+
+    // only the sorted portion ends at 'sortedEnd'; everything after is unsorted
+    Node* sortedEnd = head;
+    while (sortedEnd->next) {
+        Node* key = sortedEnd->next; // the element we are about to place
+        if (key->age >= sortedEnd->age) {
+            // already in the right place, just extend the sorted section
+            sortedEnd = sortedEnd->next;
+        } else {
+            // detach key from its current position
+            sortedEnd->next = key->next;
+
+            // find where to insert it inside the sorted section
+            if (key->age < head->age) {
+                // goes before head
+                key->next = head;
+                head = key;
+            } else {
+                Node* prev = head;
+                while (prev->next != key && prev->next->age <= key->age)
+                    prev = prev->next;
+                key->next  = prev->next;
+                prev->next = key;
+            }
+        }
+    }
+
+    auto end = chrono::high_resolution_clock::now();
+    double ms = chrono::duration<double, milli>(end - start).count();
+    cout << "\n  [Insertion Sort by Age] Sorted " << count
+         << " nodes in " << fixed << setprecision(4) << ms << " ms\n";
+    cout << "  Time Complexity: O(n^2) worst / O(n) best  |  Space Complexity: O(1)  (in-place pointer re-linking)\n";
+}
+
+// insertion sort by daily distance
+void LinkedList::insertionSortByDistance() {
+    if (!head || !head->next) return;
+
+    auto start = chrono::high_resolution_clock::now();
+
+    Node* sortedEnd = head;
+    while (sortedEnd->next) {
+        Node* key = sortedEnd->next;
+        if (key->distance >= sortedEnd->distance) {
+            sortedEnd = sortedEnd->next;
+        } else {
+            sortedEnd->next = key->next;
+            if (key->distance < head->distance) {
+                key->next = head;
+                head = key;
+            } else {
+                Node* prev = head;
+                while (prev->next != key && prev->next->distance <= key->distance)
+                    prev = prev->next;
+                key->next  = prev->next;
+                prev->next = key;
+            }
+        }
+    }
+
+    auto end = chrono::high_resolution_clock::now();
+    double ms = chrono::duration<double, milli>(end - start).count();
+    cout << "\n  [Insertion Sort by Distance] Sorted " << count
+         << " nodes in " << fixed << setprecision(4) << ms << " ms\n";
+    cout << "  Time Complexity: O(n^2) worst / O(n) best  |  Space Complexity: O(1)  (in-place pointer re-linking)\n";
+}
+
+// insertion sort by total carbon emission
+void LinkedList::insertionSortByEmission() {
+    if (!head || !head->next) return;
+
+    auto start = chrono::high_resolution_clock::now();
+
+    Node* sortedEnd = head;
+    while (sortedEnd->next) {
+        Node* key = sortedEnd->next;
+        if (key->totalEmission >= sortedEnd->totalEmission) {
+            sortedEnd = sortedEnd->next;
+        } else {
+            sortedEnd->next = key->next;
+            if (key->totalEmission < head->totalEmission) {
+                key->next = head;
+                head = key;
+            } else {
+                Node* prev = head;
+                while (prev->next != key && prev->next->totalEmission <= key->totalEmission)
+                    prev = prev->next;
+                key->next  = prev->next;
+                prev->next = key;
+            }
+        }
+    }
+
+    auto end = chrono::high_resolution_clock::now();
+    double ms = chrono::duration<double, milli>(end - start).count();
+    cout << "\n  [Insertion Sort by Emission] Sorted " << count
+         << " nodes in " << fixed << setprecision(4) << ms << " ms\n";
+    cout << "  Time Complexity: O(n^2) worst / O(n) best  |  Space Complexity: O(1)  (in-place pointer re-linking)\n";
+}
+
+// restore the original dataset order by sorting lexicographically on the Resident ID string
+// e.g. A001 < A002 < ... < A200, B001 < B002, etc.
+void LinkedList::sortByResidentID() {
+    if (!head || !head->next) return;
+
+    auto start = chrono::high_resolution_clock::now();
+
+    Node* sortedEnd = head;
+    while (sortedEnd->next) {
+        Node* key = sortedEnd->next;
+        if (key->residentID >= sortedEnd->residentID) {
+            sortedEnd = sortedEnd->next;
+        } else {
+            sortedEnd->next = key->next;
+            if (key->residentID < head->residentID) {
+                key->next = head;
+                head = key;
+            } else {
+                Node* prev = head;
+                while (prev->next != key && prev->next->residentID <= key->residentID)
+                    prev = prev->next;
+                key->next  = prev->next;
+                prev->next = key;
+            }
+        }
+    }
+
+    auto end = chrono::high_resolution_clock::now();
+    double ms = chrono::duration<double, milli>(end - start).count();
+    cout << "\n  [Restored Original Order] Sorted by Resident ID (" << count
+         << " residents) in " << fixed << setprecision(4) << ms << " ms\n";
+    cout << "  Time Complexity: O(n^2) worst / O(n) best  |  Space Complexity: O(1)\n";
 }
 
 // search for residents in an age range
@@ -563,13 +724,24 @@ void LinkedList::binarySearchByAge(int targetAge) const {
          << "        requires traversal. An index array is used here for demonstration.\n";
 }
 
-// figure out which age group a person belongs to
-string LinkedList::ageGroupLabel(int age) {
-    if (age >=  6 && age <= 17) return "6-17  (Children & Teenagers)";
-    if (age >= 18 && age <= 25) return "18-25 (University / Young Adults)";
-    if (age >= 26 && age <= 45) return "26-45 (Working Adults Early Career)";
-    if (age >= 46 && age <= 60) return "46-60 (Working Adults Late Career)";
-    if (age >= 61)              return "61+   (Senior Citizens / Retirees)";
+// figure out which age group a person belongs to, using the exact labels from each city's dataset
+string LinkedList::ageGroupLabel(int age, char cityPrefix) {
+    if (cityPrefix == 'A') {
+        if (age >= 26 && age <= 45) return "Working Adults (Early Career)";
+        if (age >= 46 && age <= 60) return "Working Adults (Late Career)";
+        return "Unknown";
+    }
+    if (cityPrefix == 'B') {
+        if (age >=  6 && age <= 17) return "Children & Teenagers";
+        if (age >= 18 && age <= 25) return "University Students / Young Adults";
+        return "Unknown";
+    }
+    // City C and fallback - mix of both young and adult groups
+    if (age >=  6 && age <= 17) return "Children & Teenagers";
+    if (age >= 18 && age <= 25) return "University Students / Young Adults";
+    if (age >= 26 && age <= 45) return "Working Adults (Early Career)";
+    if (age >= 46 && age <= 60) return "Working Adults (Late Career)";
+    if (age >= 61)              return "Senior Citizens / Retirees";
     return "Unknown";
 }
 
@@ -623,13 +795,14 @@ void LinkedList::carbonAnalysis() const {
 void LinkedList::ageGroupAnalysis() const {
     if (!head) { cout << "  (no data)\n"; return; }
 
-    // the groups we care about, in order
+    // all possible labels that appear across the datasets, in display order
     const string GROUPS[] = {
-        "6-17  (Children & Teenagers)",
-        "18-25 (University / Young Adults)",
-        "26-45 (Working Adults Early Career)",
-        "46-60 (Working Adults Late Career)",
-        "61+   (Senior Citizens / Retirees)"
+        "Children & Teenagers",
+        "University Students / Young Adults",
+        "Working Adults (Early Career)",
+        "Working Adults (Late Career)",
+        "Senior Citizens / Retirees",
+        "Unknown"
     };
 
     map<string, double>             groupEmission;
@@ -638,8 +811,9 @@ void LinkedList::ageGroupAnalysis() const {
 
     Node* cur = head;
     while (cur) {
-        string grp = ageGroupLabel(cur->age);
-        groupEmission[grp]             += cur->totalEmission;
+        // use the stored ageGroup directly - no re-computation needed
+        const string& grp = cur->ageGroup;
+        groupEmission[grp]          += cur->totalEmission;
         groupCount[grp]++;
         groupModeCount[grp][cur->mode]++;
         cur = cur->next;

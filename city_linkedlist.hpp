@@ -2,64 +2,75 @@
 #include <string>
 #include "resident_node.hpp"
 
-// the linked list class, holds all the resident nodes
+      // linked list class - stores all resident nodes for a city
 class LinkedList {
 private:
-    Node* head;  // first node
-    int   count; // how many nodes are in here
-    std::string sourceFilename; // remembers where to save
-    std::string csvHeader;      // remembers original csv header
+    Node* head;    // start of the list
+    int   count; // total nodes
+    std::string sourceFilename;    // so we know where to save back
+    std::string csvHeader;      // keep the original header line
 
 public:
-    // setup and cleanup
+       // constructor/destructor
     LinkedList();
     ~LinkedList();
 
-    // insert at the end (used when loading from csv)
+        // append to end (mainly used when loading csv)
     void insert(const std::string& id, int age, const std::string& mode,
-                double distance, double emFactor, int days);
-    // insert at the very front
+                double distance, double emFactor, int days,
+                const std::string& ageGroup, double totalEmission);
+       // add to front of list
     void insertAtBeginning(const std::string& id, int age, const std::string& mode,
-                           double distance, double emFactor, int days);
-    // insert somewhere in the middle, position starts at 1
+                           double distance, double emFactor, int days,
+                           const std::string& ageGroup, double totalEmission);
+                          // insert at a given position (1 = head)
     void insertAtPosition(int pos, const std::string& id, int age, const std::string& mode,
-                          double distance, double emFactor, int days);
-    // remove a node by resident id
+                          double distance, double emFactor, int days,
+                          const std::string& ageGroup, double totalEmission);
+            // delete by resident id
     bool deleteResident(const std::string& id);
-    // flip the whole list
+       // reverse the whole list
     void reverse();
 
     void display() const;
     int  size()    const { return count; }
     void clear();
 
-    // reads the csv and loads everything in
+     // load from csv file
     bool loadFromCSV(const std::string& filename);
-    // saves the current memory list back to the csv file
+          // write current list back to csv
     bool saveToCSV() const;
 
-    // sorting, all bubble sort so O(n^2)
+          // bubble sort - O(n^2)
     void sortByAge();
     void sortByDistance();
     void sortByEmission();
 
-    // linear search options
+             // insertion sort - faster when nearly sorted
+    void insertionSortByAge();
+    void insertionSortByDistance();
+    void insertionSortByEmission();
+
+     // go back to original order (sort by resident ID)
+    void sortByResidentID();
+
+       // linear search
     void linearSearchByAgeGroup(int minAge, int maxAge) const;
     void linearSearchByMode(const std::string& mode)     const;
     void linearSearchByDistanceThreshold(double minKm)   const;
 
-    // binary search, list needs to be sorted by age first
+    // binary search - needs list sorted by age first
     void binarySearchByAge(int targetAge) const;
 
-    // analysis functions
+    // analysis
     void carbonAnalysis()   const;
     void ageGroupAnalysis() const;
 
+        // get the right age        group label based on city
+    static std::string ageGroupLabel(int age, char cityPrefix);
 private:
-    // returns the age group label for a given age
-    static std::string ageGroupLabel(int age);
-    // swaps data between two nodes without touching the pointers
+            // swap node       data without moving pointers
     static void swapData(Node* a, Node* b);
-    // checks if an id is already in the list
+     // check if id already in list
     bool idExists(const std::string& id) const;
 };
