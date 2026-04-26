@@ -1,0 +1,869 @@
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <iomanip>
+#include <chrono>
+
+using namespace std;
+
+// 128 bytes
+struct Resident
+{
+    string residentID;
+    int age;
+    string modeOfTransport;
+    float dailyDistance;
+    float carbonEmissionFactor;
+    float avgDayPerMonth;
+    string ageGroup;
+    float totalMonthlyEmission;
+};
+
+// ==========================================
+// USER'S PART: LINKED LIST STRUCTURE FOR CITY C
+// ==========================================
+struct ResidentNode {
+    Resident data;
+    ResidentNode* next;
+};
+
+class CityCLinkedList {
+public:
+    ResidentNode* head;
+
+    CityCLinkedList() {
+        head = nullptr;
+    }
+
+    // 1. Insertion at the Beginning
+    void insertAtBeginning(Resident resident) {
+        ResidentNode* newNode = new ResidentNode();
+        newNode->data = resident;
+        newNode->next = head;
+        head = newNode;
+        cout << "Inserted resident " << resident.residentID << " at the beginning.\n";
+    }
+
+    // 2. Insertion at the End
+    void insertAtEnd(Resident resident, bool quiet=false) {
+        ResidentNode* newNode = new ResidentNode();
+        newNode->data = resident;
+        newNode->next = nullptr;
+
+        if (head == nullptr) {
+            head = newNode;
+        } else {
+            ResidentNode* temp = head;
+            while (temp->next != nullptr) {
+                temp = temp->next;
+            }
+            temp->next = newNode;
+        }
+        if(!quiet) cout << "Inserted resident " << resident.residentID << " at the end.\n";
+    }
+
+    // 3. Insertion at a Specific Position
+    void insertAtPosition(Resident resident, int position) {
+        if (position <= 1) {
+            insertAtBeginning(resident);
+            return;
+        }
+
+        ResidentNode* newNode = new ResidentNode();
+        newNode->data = resident;
+
+        ResidentNode* temp = head;
+        for (int i = 1; i < position - 1 && temp != nullptr; i++) {
+            temp = temp->next;
+        }
+
+        if (temp == nullptr) {
+            cout << "Position out of bounds. Inserting at the end.\n";
+            insertAtEnd(resident);
+        } else {
+            newNode->next = temp->next;
+            temp->next = newNode;
+            cout << "Inserted resident " << resident.residentID << " at position " << position << ".\n";
+        }
+    }
+
+    // 4. Deletion of a Node
+    void deleteNode(string residentID) {
+        if (head == nullptr) {
+            cout << "List is empty.\n";
+            return;
+        }
+
+        if (head->data.residentID == residentID) {
+            ResidentNode* temp = head;
+            head = head->next;
+            delete temp;
+            cout << "Deleted resident " << residentID << ".\n";
+            return;
+        }
+
+        ResidentNode* temp = head;
+        while (temp->next != nullptr && temp->next->data.residentID != residentID) {
+            temp = temp->next;
+        }
+
+        if (temp->next == nullptr) {
+            cout << "Resident ID " << residentID << " not found.\n";
+        } else {
+            ResidentNode* nodeToDelete = temp->next;
+            temp->next = temp->next->next;
+            delete nodeToDelete;
+            cout << "Deleted resident " << residentID << ".\n";
+        }
+    }
+
+    // 5. Searching for a Value
+    void searchNode(string residentID) {
+        ResidentNode* temp = head;
+        int pos = 1;
+        while (temp != nullptr) {
+            if (temp->data.residentID == residentID) {
+                cout << "Resident ID " << residentID << " found at position " << pos << ".\n";
+                return;
+            }
+            temp = temp->next;
+            pos++;
+        }
+        cout << "Resident ID " << residentID << " not found.\n";
+    }
+
+    // 6. Reversing the Linked List
+    void reverseList() {
+        ResidentNode* prev = nullptr;
+        ResidentNode* current = head;
+        ResidentNode* next = nullptr;
+
+        while (current != nullptr) {
+            next = current->next;
+            current->next = prev;
+            prev = current;
+            current = next;
+        }
+        head = prev;
+        cout << "Linked list reversed.\n";
+    }
+
+    void displayList() {
+        ResidentNode* temp = head;
+        cout << "=====City C Linked List=====\n";
+        int count = 0;
+        while(temp != nullptr) {
+            count++;
+            temp = temp->next;
+        }
+        cout << "Total Records visible: " << count << "\n";
+    }
+    
+    void clearList() {
+        ResidentNode* current = head;
+        while(current != nullptr) {
+            ResidentNode* next = current->next;
+            delete current;
+            current = next;
+        }
+        head = nullptr;
+    }
+};
+
+CityCLinkedList cityCLinkedList;
+
+// CHANGE FOR LINKED LISTS
+const int max_residents = 1000;
+Resident cityA[max_residents];
+Resident cityB[max_residents];
+Resident cityC[max_residents];
+
+string datasetNames[3] = {"City A", "City B", "City C"};
+int citySizes[3] = {0, 0, 0}; // ONLY FOR ARRAY When program runs this will get the size for each dataset citySizes[0] means cityA so you guys can use as the boundary when making the sorting/searching functions. use citySizes[currentDataset] as boundary
+int currentDataset = 0;
+int choice;
+
+// ==========================================
+// COMPARISON: ARRAY VS LINKED LIST FOR CITY C
+// ==========================================
+void compareArrayVsLinkedListCityC() {
+    int sizeCityC = citySizes[2];
+    
+    cout << "\n===== Comparisation: Array vs Linked List (City C) =====\n";
+    
+    // 1. Memory Usage
+    size_t arrayMemory = sizeCityC * sizeof(Resident);
+    
+    int listSize = 0;
+    ResidentNode* temp = cityCLinkedList.head;
+    while(temp != nullptr) {
+        listSize++;
+        temp = temp->next;
+    }
+    size_t listMemory = listSize * sizeof(ResidentNode);
+    
+    cout << "--- Memory Usage ---\n";
+    cout << "Array Memory (for " << sizeCityC << " residents): " << arrayMemory << " bytes.\n";
+    cout << "Linked List Memory (for " << listSize << " residents): " << listMemory << " bytes.\n";
+    cout << "Note: Linked List uses more memory due to pointer overhead.\n\n";
+    
+    // 2. Traversal Time
+    cout << "--- Traversal Time ---\n";
+    auto startArray = chrono::high_resolution_clock::now();
+    float dummySumArr = 0;
+    for(int i=0; i<sizeCityC; i++) {
+        dummySumArr += cityC[i].totalMonthlyEmission; 
+    }
+    auto endArray = chrono::high_resolution_clock::now();
+    
+    auto startList = chrono::high_resolution_clock::now();
+    float dummySumList = 0;
+    temp = cityCLinkedList.head;
+    while(temp != nullptr) {
+        dummySumList += temp->data.totalMonthlyEmission;
+        temp = temp->next;
+    }
+    auto endList = chrono::high_resolution_clock::now();
+    
+    cout << "Array Traversal Time: " << chrono::duration_cast<chrono::nanoseconds>(endArray - startArray).count() << " ns\n";
+    cout << "Linked List Traversal Time: " << chrono::duration_cast<chrono::nanoseconds>(endList - startList).count() << " ns\n";
+}
+
+void cityCLinkedListMenu() {
+    int choice;
+    string id;
+    Resident dummyRes = {"NEW001", 20, "Bicycle", 5.0, 0.1, 15.0, "University Students", 7.5};
+    
+    while(true) {
+        cout << "\n===== CITY C LINKED LIST MENU =====\n";
+        cout << "1. Insert at Beginning (Dummy Data)\n";
+        cout << "2. Insert at End (Dummy Data)\n";
+        cout << "3. Insert at Specific Position (Pos 2, Dummy Data)\n";
+        cout << "4. Delete a Node by Resident ID\n";
+        cout << "5. Search for a Value by Resident ID\n";
+        cout << "6. Reverse the Linked List\n";
+        cout << "7. Return to Main Menu\n";
+        cout << "Enter Choice: ";
+        cin >> choice;
+        
+        switch(choice) {
+            case 1: cityCLinkedList.insertAtBeginning(dummyRes); break;
+            case 2: cityCLinkedList.insertAtEnd(dummyRes); break;
+            case 3: cityCLinkedList.insertAtPosition(dummyRes, 2); break;
+            case 4: 
+                cout << "Enter Resident ID to delete: ";
+                cin >> id;
+                cityCLinkedList.deleteNode(id);
+                break;
+            case 5:
+                cout << "Enter Resident ID to search: ";
+                cin >> id;
+                cityCLinkedList.searchNode(id);
+                break;
+            case 6: cityCLinkedList.reverseList(); break;
+            case 7: return;
+            default: cout << "Invalid choice.\n";
+        }
+    }
+}
+
+
+
+/*==========FUNCTION PROTOTYPES==========*/
+// main menu
+void switch_dataset();
+void display_all_residents();
+void age_group_analysis();
+void carbon_emission_analysis();
+void sort_dataset_menu();
+void search_dataset_menu();
+void insert_resident();
+void initialise_datasets();
+
+// sorting menus
+void bubblesortmenu();
+void insertionsortmenu();
+
+// sorting algorithms
+void bubblesort(int dataset, string field);
+void insertionsort(int dataset, string field);
+
+// searching menus
+void linearsearchmenu();
+void binarysearchmenu();
+
+// searching algorithms
+void linearsearch(int dataset, string field);
+void binarysearch(int dataset, string field);
+/*========================================*/
+
+/*
+Array: Total memory = number of elements * size of element
+Linked Lists: Total memory = number of elements * (size of element + size of pointer)
+*/
+
+// Calculates memory usage
+size_t calculateMemoryUsage(int dataset)
+{
+    int size = citySizes[dataset];
+    return size * sizeof(Resident);
+}
+
+// Getter for the dataset
+Resident *getDataset(int dataset)
+{
+    if (dataset == 0)
+        return cityA;
+    if (dataset == 1)
+        return cityB;
+    return cityC;
+}
+
+/*==========MAIN MENU FUNCTIONS==========*/
+void switch_dataset()
+{
+    while (true)
+    {
+        cout << "=====SELECT DATASET=====\n1. City A\n2. City B\n3. City C\n4. Back\nEnter choice: ";
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            currentDataset = 0;
+            return;
+        case 2:
+            currentDataset = 1;
+            return;
+        case 3:
+            currentDataset = 2;
+            return;
+        case 4:
+            return;
+        default:
+            cout << "Invalid choice. Please try again.\n\n";
+        }
+    }
+}
+
+void display_all_residents()
+{
+    Resident *data = getDataset(currentDataset);
+    int size = citySizes[currentDataset];
+
+    cout << "=====Current Dataset: " << datasetNames[currentDataset] << "=====\n";
+    cout << left << setw(10) << "ID"
+         << setw(10) << "Age"
+         << setw(30) << "Mode Of Transport"
+         << setw(20) << "Daily Distance"
+         << setw(20) << "Carbon Factor"
+         << setw(40) << "Average Days Per Month"
+         << setw(40) << "Age Group"
+         << setw(10) << "Total Monthly Emission" << "\n";
+
+    for (int i = 0; i < size; i++)
+    {
+        cout << left << setw(10) << data[i].residentID
+             << setw(10) << data[i].age
+             << setw(30) << data[i].modeOfTransport
+             << setw(20) << data[i].dailyDistance
+             << setw(20) << data[i].carbonEmissionFactor
+             << setw(40) << data[i].avgDayPerMonth
+             << setw(40) << data[i].ageGroup
+             << setw(10) << data[i].totalMonthlyEmission << "\n";
+    }
+}
+
+void age_group_analysis()
+{
+    Resident *data = getDataset(currentDataset);
+    int size = citySizes[currentDataset];
+
+    // Total emission and resident count for each age group
+    float totalEmission[5] = {0};
+    int count[5] = {0};
+
+    // Modes of transport
+    string modes[6] = {"Car", "Bus", "Bicycle", "Walking", "Carpool", "School Bus"};
+
+    // Transportcount("Children", (e.g. "Car")5)
+    int transportCount[5][6] = {0};
+
+    for (int i = 0; i < size; i++)
+    {
+        int group;
+
+        if (data[i].age <= 17)
+            group = 0;
+        else if (data[i].age <= 25)
+            group = 1;
+        else if (data[i].age <= 45)
+            group = 2;
+        else if (data[i].age <= 60)
+            group = 3;
+        else
+            group = 4;
+
+        totalEmission[group] += data[i].totalMonthlyEmission;
+        count[group]++;
+
+        for (int j = 0; j < 6; j++)
+        {
+            if (data[i].modeOfTransport == modes[j])
+            {
+                transportCount[group][j]++;
+                break;
+            }
+        }
+    }
+    string groups[5] = {"6 - 17 (Children & Teenagers)", "18 - 25 (University Students / Young Adults)", "26 - 45 (Working Adults (Early Career))", "46 - 60 (Working Adults (Late Career)", "61+ (Senior Citizens / Retirees)"};
+
+    cout << "=====Age Group Analysis===== \n";
+    cout << left << setw(50) << "Age Group"
+         << setw(30) << "Preferred Mode Of Transport"
+         << setw(20) << "Total Emission"
+         << setw(20) << "Average Emission" << "\n";
+
+    for (int i = 0; i < 5; i++)
+    {
+        float avg = (count[i] == 0) ? 0 : totalEmission[i] / count[i];
+        string preferred = "N/A";
+        int max = 0;
+
+        for (int j = 0; j < 6; j++)
+        {
+            if (transportCount[i][j] > max)
+            {
+                max = transportCount[i][j];
+                preferred = modes[j];
+            }
+        }
+        cout << left << setw(50) << groups[i]
+             << setw(30) << preferred
+             << setw(20) << totalEmission[i]
+             << setw(20) << avg << "\n";
+    }
+}
+void carbon_emission_analysis() {}
+
+void sort_dataset_menu()
+{
+    while (true)
+    {
+        cout << "=====SELECT SORTING METHOD=====\n1. Bubble Sort\n2. Insertion Sort\n3. Back\nEnter choice: ";
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            bubblesortmenu();
+            return;
+        case 2:
+            insertionsortmenu();
+            return;
+        case 3:
+            return;
+        default:
+            cout << "Invalid choice. Please try again.\n\n";
+        }
+    }
+}
+
+void search_dataset_menu()
+{
+    while (true)
+    {
+        cout << "=====SELECT SEARCHING METHOD=====\n1. Linear Search\n2. Binary Search\n3. Back\nEnter choice: ";
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            linearsearchmenu();
+            return;
+        case 2:
+            binarysearchmenu();
+            return;
+        case 3:
+            return;
+        default:
+            cout << "Invalid choice. Please try again.\n\n";
+        }
+    }
+}
+/*==========SORTING==========*/
+/*==========SORTING ALGORITHMS MENUS==========*/
+void bubblesortmenu()
+{
+    while (true)
+    {
+        cout << "=====SELECT FIELD TO PERFORM BUBBLESORT=====\n1. Age\n2. Daily Distance\n3. Carbon Emissions\n4. Back\nEnter choice: ";
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            bubblesort(currentDataset, "age");
+            return;
+        case 2:
+            bubblesort(currentDataset, "dailyDistance");
+            return;
+        case 3:
+            bubblesort(currentDataset, "carbonEmissionFactor");
+            return;
+        case 4:
+            sort_dataset_menu();
+            return;
+        default:
+            cout << "Invalid choice. Please try again.\n\n";
+        }
+    }
+}
+
+void insertionsortmenu()
+{
+    while (true)
+    {
+        cout << "=====SELECT FIELD TO PERFORM INSERTIONSORT=====\n1. Age\n2. Daily Distance\n3. Carbon Emissions\n4. Back\nEnter choice: ";
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            insertionsort(currentDataset, "age");
+            return;
+        case 2:
+            insertionsort(currentDataset, "dailyDistance");
+            return;
+        case 3:
+            insertionsort(currentDataset, "carbonEmissionFactor");
+            return;
+        case 4:
+            sort_dataset_menu();
+            return;
+        default:
+            cout << "Invalid choice. Please try again.\n\n";
+        }
+    }
+}
+/*========================================*/
+
+/*==========SORTING ALGORITHMS==========*/
+void bubblesort(int dataset, string field)
+{
+    Resident *data = getDataset(dataset);
+    int size = citySizes[dataset];
+
+    // Record time and memory usuage
+    auto start = chrono::high_resolution_clock::now();
+    size_t memoryUsed = calculateMemoryUsage(dataset);
+
+    // Tempory swap memory
+    memoryUsed += sizeof(Resident);
+
+    for (int i = 0; i < size - 1; i++)
+    {
+        for (int j = 0; j < size - i - 1; j++)
+        {
+            bool swap = false;
+            if (field == "age" && data[j].age > data[j + 1].age)
+                swap = true;
+            else if (field == "dailyDistance" && data[j].dailyDistance > data[j + 1].dailyDistance)
+                swap = true;
+            else if (field == "carbonEmissionFactor" && data[j].totalMonthlyEmission > data[j + 1].totalMonthlyEmission)
+                swap = true;
+
+            if (swap)
+            {
+                Resident temp = data[j];
+                data[j] = data[j + 1];
+                data[j + 1] = temp;
+            }
+        }
+    }
+    auto end = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::microseconds>(end - start);
+    display_all_residents();
+    cout << "Time Taken: " << duration.count() << " microseconds\n";
+    cout << "Memory Used: " << memoryUsed << " bytes\n";
+    ;
+}
+
+void insertionsort(int dataset, string field)
+{
+    Resident *data = getDataset(dataset);
+    int size = citySizes[dataset];
+
+    auto start = chrono::high_resolution_clock::now();
+    size_t memoryUsed = calculateMemoryUsage(dataset);
+
+    // key memory
+    memoryUsed += sizeof(Resident);
+
+    for (int i = 1; i < size; i++)
+    {
+        Resident key = data[i];
+        int j = i - 1;
+
+        while (j >= 0)
+        {
+            bool condition = false;
+
+            if (field == "age" && data[j].age > key.age)
+                condition = true;
+
+            else if (field == "dailyDistance" && data[j].dailyDistance > key.dailyDistance)
+                condition = true;
+
+            else if (field == "carbonEmissionFactor" && data[j].totalMonthlyEmission > key.totalMonthlyEmission)
+                condition = true;
+
+            if (!condition)
+                break;
+
+            data[j + 1] = data[j];
+            j--;
+        }
+        data[j + 1] = key;
+    }
+    auto end = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::microseconds>(end - start);
+    display_all_residents();
+    cout << "Time Taken: " << duration.count() << " microseconds\n";
+    cout << "Memory Used: " << memoryUsed << " bytes\n";
+}
+
+/*========================================*/
+
+/*==========SEARCHING ALGORITHMS MENUS==========*/
+void linearsearchmenu()
+{
+    while (true)
+    {
+        cout << "=====SELECT FIELD TO PERFORM LINEAR SEARCH=====\n1. Age\n2. Mode of Transport\n3. Daily Distance\n4. Back\nEnter choice: ";
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            linearsearch(currentDataset, "age");
+            return;
+        case 2:
+            linearsearch(currentDataset, "modeOfTransport");
+            return;
+        case 3:
+            linearsearch(currentDataset, "dailyDistance");
+            return;
+        case 4:
+            search_dataset_menu();
+            return;
+        default:
+            cout << "Invalid choice. Please try again.\n\n";
+        }
+    }
+}
+
+void binarysearchmenu()
+{
+    while (true)
+    {
+        cout << "=====SELECT FIELD TO PERFORM BINARY SEARCH=====\n1. Age\n2. Mode of Transport\n3. Daily Distance\n4. Back\nEnter choice: ";
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            binarysearch(currentDataset, "age");
+            return;
+        case 2:
+            binarysearch(currentDataset, "modeOfTransport");
+            return;
+        case 3:
+            binarysearch(currentDataset, "dailyDistance");
+            return;
+        case 4:
+            search_dataset_menu();
+            return;
+        default:
+            cout << "Invalid choice. Please try again.\n\n";
+        }
+    }
+}
+/*========================================*/
+
+/*==========SEARCHING ALGORITHMS==========*/
+void linearsearch(int dataset, string field)
+{
+    cout << "CALLED LINEARSEARCH WITH DATASET: " << datasetNames[currentDataset] << " ON FIELD: " << field << "\n";
+}
+
+void binarysearch(int dataset, string field)
+{
+    cout << "CALLED BINARYSEARCH WITH DATASET: " << datasetNames[currentDataset] << " ON FIELD: " << field << "\n";
+}
+/*========================================*/
+
+// MODIFY FOR LINKED LISTS
+void insert_resident()
+{
+    Resident* data = getDataset(currentDataset);
+    int& size = citySizes[currentDataset];
+
+    if (size >= max_residents) {
+        cout << "Dataset is full. Cannot insert more residents.\n";
+        return;
+    }
+
+    Resident temp;
+    cout << "Enter Resident ID: ";
+    cin >> temp.residentID;
+    cout << "Enter Age: ";
+    cin >> temp.age;
+    cout << "Enter Mode of Transport: ";
+    cin >> temp.modeOfTransport;
+    cout << "Enter Daily Distance: ";
+    cin >> temp.dailyDistance;
+    cout << "Enter Carbon Emission Factor: ";
+    cin >> temp.carbonEmissionFactor;
+    cout << "Enter Average Days Per Month: ";
+    cin >> temp.avgDayPerMonth;
+
+    if (temp.age >= 6 && temp.age <= 17)
+        temp.ageGroup = "Children & Teenagers";
+    else if (temp.age >= 18 && temp.age <= 25)
+        temp.ageGroup = "University Students / Young Adults";
+    else if (temp.age >= 26 && temp.age <= 45)
+        temp.ageGroup = "Working Adults (Early Career)";
+    else if (temp.age >= 46 && temp.age <= 60)
+        temp.ageGroup = "Working Adults (Late Career)";
+    else if (temp.age >= 61)
+        temp.ageGroup = "Senior Citizens / Retirees";
+    else
+        temp.ageGroup = "Other";
+
+    temp.totalMonthlyEmission = temp.dailyDistance * temp.carbonEmissionFactor * temp.avgDayPerMonth;
+
+    // Insertion Algorithm into Array
+    data[size] = temp;
+    
+    // If it's City C, insert to linked list as well
+    if (currentDataset == 2) {
+        cityCLinkedList.insertAtEnd(temp, true);
+    }
+    
+    size++;
+    cout << "Resident successfully inserted into " << datasetNames[currentDataset] << "!\n";
+}
+
+void initialise_datasets()
+{
+    string inputFiles[3] = {"datasetA.csv", "datasetB.csv", "datasetC.csv"};
+    Resident *targetCities[3] = {cityA, cityB, cityC};
+
+    for (int i = 0; i < 3; i++)
+    {
+        ifstream datasetFile(inputFiles[i]);
+        if (!datasetFile.is_open())
+        {
+            datasetFile.open("C Assignment/" + inputFiles[i]);
+        }
+        if (!datasetFile.is_open())
+        {
+            datasetFile.open("../C Assignment/" + inputFiles[i]);
+        }
+        
+        if (!datasetFile.is_open())
+        {
+            cout << "Error: Could not open file " << inputFiles[i] << " (Check if you're in the right directory)\n";
+            continue;
+        }
+
+        string line;
+        getline(datasetFile, line); // Skip header
+
+        int index = 0;
+        while (getline(datasetFile, line) && index < max_residents)
+        {
+            if (line.empty())
+                continue;
+
+            stringstream ss(line);
+            string token;
+            Resident temp;
+
+            getline(ss, temp.residentID, ',');
+            getline(ss, token, ','); temp.age = stoi(token);
+            getline(ss, temp.modeOfTransport, ',');
+            getline(ss, token, ','); temp.dailyDistance = stof(token);
+            getline(ss, token, ','); temp.carbonEmissionFactor = stof(token);
+            getline(ss, token, ','); temp.avgDayPerMonth = stof(token);
+            getline(ss, temp.ageGroup, ',');
+            getline(ss, token, ','); temp.totalMonthlyEmission = stof(token);
+
+            targetCities[i][index] = temp;
+            
+            // Populate City C linked list too for comparison
+            if (i == 2) {
+                if (index == 0) cityCLinkedList.clearList(); // Ensure it's empty first
+                cityCLinkedList.insertAtEnd(temp, true); // true for quiet mode
+            }
+            index++;
+        }
+        citySizes[i] = index;
+        cout << "Loaded: " << inputFiles[i] << " with " << index << " records\n";
+
+        datasetFile.close();
+    }
+}
+
+/*==========MAIN MENU==========*/
+int main()
+{
+    initialise_datasets();
+    while (true)
+    {
+        cout << "=====CARBON SYSTEM=====\nCURRENT SELECTED DATA SET:  " << datasetNames[currentDataset];
+        cout << "\n1. Switch Dataset\n2. Display All Residents\n3. Age Group Analysis\n4. Carbon Emission Analysis\n5. Sort Data Set\n6. Search Data Set\n7. Insert New Resident\n8. Reset Datasets\n9. City C Linked List Menu\n10. Compare Array vs Linked List (City C)\n11. Exit\nEnter Choice: ";
+
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            switch_dataset();
+            break;
+        case 2:
+            display_all_residents();
+            break;
+        case 3:
+            age_group_analysis();
+            break;
+        case 4:
+            carbon_emission_analysis();
+            break;
+        case 5:
+            sort_dataset_menu();
+            break;
+        case 6:
+            search_dataset_menu();
+            break;
+        case 7:
+            insert_resident();
+            break;
+        case 8:
+            initialise_datasets();
+            break;
+        case 9:
+            cityCLinkedListMenu();
+            break;
+        case 10:
+            compareArrayVsLinkedListCityC();
+            break;
+        case 11:
+            return 0;
+        default:
+            cout << "Invalid choice. Please try again.\n\n";
+        }
+    }
+    return 0;
+}
