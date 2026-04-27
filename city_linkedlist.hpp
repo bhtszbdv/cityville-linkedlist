@@ -9,6 +9,7 @@ private:
     int   count; // total nodes
     std::string sourceFilename;    // so we know where to save back
     std::string csvHeader;      // keep the original header line
+    double lastSortMs = 0.0;   // elapsed time from the last sort call
 
 public:
        // constructor/destructor
@@ -33,7 +34,8 @@ public:
     void reverse();
 
     void display() const;
-    int  size()    const { return count; }
+    int    size()        const { return count; }
+    double sortTime()    const { return lastSortMs; }  // ms from last sort
     void clear();
 
      // load from csv file
@@ -62,9 +64,20 @@ public:
     // binary search - needs list sorted by age first
     void binarySearchByAge(int targetAge) const;
 
+    // multi-condition search (City A and B only)
+    void multiConditionSearchAgeMode(int minAge, int maxAge, const std::string& mode) const;
+    void multiConditionSearchDistMode(double minKm, const std::string& mode) const;
+
     // analysis
     void carbonAnalysis()   const;
     void ageGroupAnalysis() const;
+
+    // extended analysis (City A and B only)
+    void totalEmissionsReport(char city)           const;
+    void emissionsByMode(char city)                const;
+    void transportPercentageDistribution(char city) const;
+    void ageGroupAnalysisExtended(char city)       const;
+    void topBottomEmitters(int n)                  const;
 
         // get the right age        group label based on city
     static std::string ageGroupLabel(int age, char cityPrefix);
