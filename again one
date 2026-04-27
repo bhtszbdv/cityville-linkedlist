@@ -1,0 +1,292 @@
+#pragma once
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <iomanip>
+#include <map>
+#include <chrono>
+#include <vector>
+using namespace std;
+
+struct Node {
+    string residentID; int age; string mode;
+    double distance, emissionFactor; int days;
+    string ageGroup; double totalEmission;
+    Node* next;
+    Node():age(0),distance(0),emissionFactor(0),days(0),totalEmission(0),next(nullptr){}
+};
+
+class LinkedList {
+    Node* head; int count; double lastSortTimeMs;
+    static void swapData(Node*a,Node*b){
+        swap(a->residentID,b->residentID);swap(a->age,b->age);swap(a->mode,b->mode);
+        swap(a->distance,b->distance);swap(a->emissionFactor,b->emissionFactor);
+        swap(a->days,b->days);swap(a->ageGroup,b->ageGroup);swap(a->totalEmission,b->totalEmission);
+    }
+public:
+    LinkedList():head(nullptr),count(0),lastSortTimeMs(0){}
+    ~LinkedList(){clear();}
+    int size() const{return count;}
+    double sortTime() const{return lastSortTimeMs;}
+
+    static string ageGroupLabel(int age, char prefix='X'){
+        if(age>=6&&age<=17) return "Children & Teenagers";
+        if(age>=18&&age<=25) return "University Students / Young Adults";
+        if(age>=26&&age<=45) return "Working Adults (Early Career)";
+        if(age>=46&&age<=60) return "Working Adults (Late Career)";
+        if(age>=61) return "Senior Citizens / Retirees";
+        return "Unknown";
+    }
+
+    void clear(){Node*c=head;while(c){Node*n=c->next;delete c;c=n;}head=nullptr;count=0;}
+
+    void insert(const string&id,int age,const string&mode,double dist,double em,int days,const string&ag="",double te=-1){
+        Node*n=new Node();n->residentID=id;n->age=age;n->mode=mode;n->distance=dist;
+        n->emissionFactor=em;n->days=days;
+        n->ageGroup=ag.empty()?ageGroupLabel(age):ag;
+        n->totalEmission=(te<0)?dist*em*days:te;
+        n->next=nullptr;
+        if(!head){head=n;}else{Node*c=head;while(c->next)c=c->next;c->next=n;}
+        count++;
+    }
+
+    void insertAtBeginning(const string&id,int age,const string&mode,double dist,double em,int days,const string&ag="",double te=-1){
+        Node*n=new Node();n->residentID=id;n->age=age;n->mode=mode;n->distance=dist;
+        n->emissionFactor=em;n->days=days;
+        n->ageGroup=ag.empty()?ageGroupLabel(age):ag;
+        n->totalEmission=(te<0)?dist*em*days:te;
+        n->next=head;head=n;count++;
+        cout<<"  Inserted "<<id<<" at beginning (position 1).\n";
+    }
+
+    void insertAtPosition(int pos,const string&id,int age,const string&mode,double dist,double em,int days,const string&ag="",double te=-1){
+        if(pos<=1){insertAtBeginning(id,age,mode,dist,em,days,ag,te);return;}
+        Node*n=new Node();n->residentID=id;n->age=age;n->mode=mode;n->distance=dist;
+        n->emissionFactor=em;n->days=days;
+        n->ageGroup=ag.empty()?ageGroupLabel(age):ag;
+        n->totalEmission=(te<0)?dist*em*days:te;
+        Node*t=head;for(int i=1;i<pos-1&&t;i++)t=t->next;
+        if(!t){n->next=nullptr;Node*c=head;while(c->next)c=c->next;c->next=n;}
+        else{n->next=t->next;t->next=n;}
+        count++;
+        cout<<"  Inserted "<<id<<" at position "<<pos<<".\n";
+    }
+
+    bool deleteResident(const string&id){
+        if(!head){cout<<"  List empty.\n";return false;}
+        if(head->residentID==id){Node*t=head;head=head->next;delete t;count--;cout<<"  Deleted "<<id<<".\n";return true;}
+        Node*t=head;while(t->next&&t->next->residentID!=id)t=t->next;
+        if(!t->next){cout<<"  "<<id<<" not found.\n";return false;}
+        Node*d=t->next;t->next=d->next;delete d;count--;cout<<"  Deleted "<<id<<".\n";return true;
+    }
+
+    void reverse(){
+        Node*prev=nullptr,*cur=head,*nxt;
+        while(cur){nxt=cur->next;cur->next=prev;prev=cur;cur=nxt;}
+        head=prev;cout<<"  List reversed.\n";
+    }
+
+    bool loadFromCSV(const string&fn){
+        ifstream f(fn);if(!f.is_open()){cout<<"  [ERROR] Cannot open "<<fn<<"\n";return false;}
+        string line;getline(f,line);int loaded=0;
+        auto trim=[](string&s){size_t a=s.find_first_not_of(" \t\r\n");size_t b=s.find_last_not_of(" \t\r\n");s=(a==string::npos)?"":s.substr(a,b-a+1);};
+        while(getline(f,line)){
+            if(line.empty()||line=="\r")continue;
+            if(!line.empty()&&line.back()=='\r')line.pop_back();
+            stringstream ss(line);
+            string id,ageS,mode,distS,emS,daysS,ag,totS;
+            getline(ss,id,',');getline(ss,ageS,',');getline(ss,mode,',');getline(ss,distS,',');
+            getline(ss,emS,',');getline(ss,daysS,',');getline(ss,ag,',');getline(ss,totS,',');
+            trim(id);trim(ageS);trim(mode);trim(distS);trim(emS);trim(daysS);trim(ag);trim(totS);
+            if(id.empty())continue;
+            try{
+                int age=stoi(ageS);double dist=stod(distS);double em=stod(emS);int days=stoi(daysS);
+                double tot=totS.empty()?dist*em*days:stod(totS);
+                insert(id,age,mode,dist,em,days,ag,tot);loaded++;
+            }catch(...){}
+        }
+        f.close();cout<<"  Loaded "<<loaded<<" records from "<<fn<<"\n";return true;
+    }
+
+    void saveToCSV() const{}
+
+    void display() const{
+        if(!head){cout<<"  (no data)\n";return;}
+        cout<<"\n"<<left<<setw(8)<<"ID"<<setw(6)<<"Age"<<setw(36)<<"Age Group"<<setw(14)<<"Mode"
+            <<setw(10)<<"Dist(km)"<<setw(14)<<"TotalEmis(kg)"<<"\n"<<string(88,'-')<<"\n";
+        Node*c=head;while(c){
+            cout<<left<<setw(8)<<c->residentID<<setw(6)<<c->age<<setw(36)<<c->ageGroup
+                <<setw(14)<<c->mode<<setw(10)<<fixed<<setprecision(1)<<c->distance
+                <<setw(14)<<fixed<<setprecision(2)<<c->totalEmission<<"\n";
+            c=c->next;
+        }
+        cout<<string(88,'-')<<"\n  Total records: "<<count<<"\n";
+    }
+
+    // ---- BUBBLE SORT ----
+    void sortByAge(){
+        if(!head||!head->next)return;
+        auto s=chrono::high_resolution_clock::now();bool sw;
+        do{sw=false;Node*c=head;while(c->next){if(c->age>c->next->age){swapData(c,c->next);sw=true;}c=c->next;}}while(sw);
+        lastSortTimeMs=chrono::duration<double,milli>(chrono::high_resolution_clock::now()-s).count();
+        cout<<"\n  [Bubble Sort by Age] "<<count<<" nodes in "<<fixed<<setprecision(4)<<lastSortTimeMs<<" ms\n";
+        cout<<"  Time Complexity: O(n^2) | Space: O(1)\n";
+    }
+    void sortByDistance(){
+        if(!head||!head->next)return;
+        auto s=chrono::high_resolution_clock::now();bool sw;
+        do{sw=false;Node*c=head;while(c->next){if(c->distance>c->next->distance){swapData(c,c->next);sw=true;}c=c->next;}}while(sw);
+        lastSortTimeMs=chrono::duration<double,milli>(chrono::high_resolution_clock::now()-s).count();
+        cout<<"\n  [Bubble Sort by Distance] "<<count<<" nodes in "<<fixed<<setprecision(4)<<lastSortTimeMs<<" ms\n";
+        cout<<"  Time Complexity: O(n^2) | Space: O(1)\n";
+    }
+    void sortByEmission(){
+        if(!head||!head->next)return;
+        auto s=chrono::high_resolution_clock::now();bool sw;
+        do{sw=false;Node*c=head;while(c->next){if(c->totalEmission>c->next->totalEmission){swapData(c,c->next);sw=true;}c=c->next;}}while(sw);
+        lastSortTimeMs=chrono::duration<double,milli>(chrono::high_resolution_clock::now()-s).count();
+        cout<<"\n  [Bubble Sort by Emission] "<<count<<" nodes in "<<fixed<<setprecision(4)<<lastSortTimeMs<<" ms\n";
+        cout<<"  Time Complexity: O(n^2) | Space: O(1)\n";
+    }
+    void sortByResidentID(){
+        if(!head||!head->next)return;
+        auto s=chrono::high_resolution_clock::now();bool sw;
+        do{sw=false;Node*c=head;while(c->next){if(c->residentID>c->next->residentID){swapData(c,c->next);sw=true;}c=c->next;}}while(sw);
+        lastSortTimeMs=chrono::duration<double,milli>(chrono::high_resolution_clock::now()-s).count();
+    }
+
+    // ---- INSERTION SORT ----
+    void insertionSortByAge(){
+        if(!head||!head->next)return;
+        auto s=chrono::high_resolution_clock::now();
+        Node*sorted=nullptr,*cur=head;
+        while(cur){Node*nxt=cur->next;
+            if(!sorted||cur->age<=sorted->age){cur->next=sorted;sorted=cur;}
+            else{Node*t=sorted;while(t->next&&t->next->age<cur->age)t=t->next;cur->next=t->next;t->next=cur;}
+            cur=nxt;}
+        head=sorted;
+        lastSortTimeMs=chrono::duration<double,milli>(chrono::high_resolution_clock::now()-s).count();
+        cout<<"\n  [Insertion Sort by Age] "<<count<<" nodes in "<<fixed<<setprecision(4)<<lastSortTimeMs<<" ms\n";
+        cout<<"  Time Complexity: O(n^2) worst / O(n) best | Space: O(1)\n";
+    }
+    void insertionSortByDistance(){
+        if(!head||!head->next)return;
+        auto s=chrono::high_resolution_clock::now();
+        Node*sorted=nullptr,*cur=head;
+        while(cur){Node*nxt=cur->next;
+            if(!sorted||cur->distance<=sorted->distance){cur->next=sorted;sorted=cur;}
+            else{Node*t=sorted;while(t->next&&t->next->distance<cur->distance)t=t->next;cur->next=t->next;t->next=cur;}
+            cur=nxt;}
+        head=sorted;
+        lastSortTimeMs=chrono::duration<double,milli>(chrono::high_resolution_clock::now()-s).count();
+        cout<<"\n  [Insertion Sort by Distance] "<<count<<" nodes in "<<fixed<<setprecision(4)<<lastSortTimeMs<<" ms\n";
+        cout<<"  Time Complexity: O(n^2) worst / O(n) best | Space: O(1)\n";
+    }
+    void insertionSortByEmission(){
+        if(!head||!head->next)return;
+        auto s=chrono::high_resolution_clock::now();
+        Node*sorted=nullptr,*cur=head;
+        while(cur){Node*nxt=cur->next;
+            if(!sorted||cur->totalEmission<=sorted->totalEmission){cur->next=sorted;sorted=cur;}
+            else{Node*t=sorted;while(t->next&&t->next->totalEmission<cur->totalEmission)t=t->next;cur->next=t->next;t->next=cur;}
+            cur=nxt;}
+        head=sorted;
+        lastSortTimeMs=chrono::duration<double,milli>(chrono::high_resolution_clock::now()-s).count();
+        cout<<"\n  [Insertion Sort by Emission] "<<count<<" nodes in "<<fixed<<setprecision(4)<<lastSortTimeMs<<" ms\n";
+        cout<<"  Time Complexity: O(n^2) worst / O(n) best | Space: O(1)\n";
+    }
+
+    // ---- SEARCH ----
+    void linearSearchByAgeGroup(int mn,int mx) const{
+        cout<<"\n  [Linear Search] Age "<<mn<<" - "<<mx<<"\n";
+        auto s=chrono::high_resolution_clock::now();int f=0;Node*c=head;
+        cout<<"  "<<left<<setw(8)<<"ID"<<setw(6)<<"Age"<<setw(14)<<"Mode"<<setw(10)<<"Dist"<<setw(14)<<"Emission"<<"\n  "<<string(52,'-')<<"\n";
+        while(c){if(c->age>=mn&&c->age<=mx){cout<<"  "<<left<<setw(8)<<c->residentID<<setw(6)<<c->age<<setw(14)<<c->mode<<setw(10)<<fixed<<setprecision(1)<<c->distance<<setw(14)<<fixed<<setprecision(2)<<c->totalEmission<<"\n";f++;}c=c->next;}
+        double ms=chrono::duration<double,milli>(chrono::high_resolution_clock::now()-s).count();
+        cout<<"  "<<string(52,'-')<<"\n  Found "<<f<<" | Time: "<<fixed<<setprecision(4)<<ms<<" ms\n  Complexity: O(n) | Space: O(1)\n";
+    }
+    void linearSearchByMode(const string&mode) const{
+        cout<<"\n  [Linear Search] Mode = \""<<mode<<"\"\n";
+        auto s=chrono::high_resolution_clock::now();int f=0;Node*c=head;
+        cout<<"  "<<left<<setw(8)<<"ID"<<setw(6)<<"Age"<<setw(14)<<"Mode"<<setw(10)<<"Dist"<<setw(14)<<"Emission"<<"\n  "<<string(52,'-')<<"\n";
+        while(c){string a=c->mode,b=mode;for(char&x:a)x=tolower(x);for(char&x:b)x=tolower(x);
+            if(a==b){cout<<"  "<<left<<setw(8)<<c->residentID<<setw(6)<<c->age<<setw(14)<<c->mode<<setw(10)<<fixed<<setprecision(1)<<c->distance<<setw(14)<<fixed<<setprecision(2)<<c->totalEmission<<"\n";f++;}c=c->next;}
+        double ms=chrono::duration<double,milli>(chrono::high_resolution_clock::now()-s).count();
+        cout<<"  "<<string(52,'-')<<"\n  Found "<<f<<" | Time: "<<fixed<<setprecision(4)<<ms<<" ms\n  Complexity: O(n) | Space: O(1)\n";
+    }
+    void linearSearchByDistanceThreshold(double mn) const{
+        cout<<"\n  [Linear Search] Distance > "<<mn<<" km\n";
+        auto s=chrono::high_resolution_clock::now();int f=0;Node*c=head;
+        cout<<"  "<<left<<setw(8)<<"ID"<<setw(6)<<"Age"<<setw(14)<<"Mode"<<setw(10)<<"Dist"<<setw(14)<<"Emission"<<"\n  "<<string(52,'-')<<"\n";
+        while(c){if(c->distance>mn){cout<<"  "<<left<<setw(8)<<c->residentID<<setw(6)<<c->age<<setw(14)<<c->mode<<setw(10)<<fixed<<setprecision(1)<<c->distance<<setw(14)<<fixed<<setprecision(2)<<c->totalEmission<<"\n";f++;}c=c->next;}
+        double ms=chrono::duration<double,milli>(chrono::high_resolution_clock::now()-s).count();
+        cout<<"  "<<string(52,'-')<<"\n  Found "<<f<<" | Time: "<<fixed<<setprecision(4)<<ms<<" ms\n  Complexity: O(n) | Space: O(1)\n";
+    }
+    void binarySearchByAge(int target) const{
+        cout<<"\n  [Binary Search] Age = "<<target<<"\n";
+        auto s=chrono::high_resolution_clock::now();
+        Node**arr=new Node*[count];Node*c=head;for(int i=0;i<count;i++,c=c->next)arr[i]=c;
+        int lo=0,hi=count-1,f=0;
+        while(lo<=hi){int m=(lo+hi)/2;if(arr[m]->age==target){int L=m,R=m;while(L>0&&arr[L-1]->age==target)L--;while(R<count-1&&arr[R+1]->age==target)R++;
+            cout<<"  "<<left<<setw(8)<<"ID"<<setw(6)<<"Age"<<setw(14)<<"Mode"<<setw(10)<<"Dist"<<setw(14)<<"Emission"<<"\n  "<<string(52,'-')<<"\n";
+            for(int i=L;i<=R;i++){cout<<"  "<<left<<setw(8)<<arr[i]->residentID<<setw(6)<<arr[i]->age<<setw(14)<<arr[i]->mode<<setw(10)<<fixed<<setprecision(1)<<arr[i]->distance<<setw(14)<<fixed<<setprecision(2)<<arr[i]->totalEmission<<"\n";f++;}break;}
+            else if(arr[m]->age<target)lo=m+1;else hi=m-1;}
+        delete[]arr;
+        double ms=chrono::duration<double,milli>(chrono::high_resolution_clock::now()-s).count();
+        if(f==0)cout<<"  Not found.\n";
+        cout<<"  Found "<<f<<" | Time: "<<fixed<<setprecision(4)<<ms<<" ms\n  Complexity: O(log n) | Space: O(n)\n";
+    }
+
+    // ---- ANALYSIS ----
+    void carbonAnalysis() const{
+        if(!head){cout<<"  (no data)\n";return;}
+        map<string,double>me;map<string,int>mc;double tot=0;
+        Node*c=head;while(c){me[c->mode]+=c->totalEmission;mc[c->mode]++;tot+=c->totalEmission;c=c->next;}
+        cout<<"\n  ========== CARBON EMISSION ANALYSIS ==========\n  Total: "<<count<<" residents | "<<fixed<<setprecision(2)<<tot<<" kg CO2/month | Avg: "<<tot/count<<"\n";
+        cout<<"  "<<left<<setw(16)<<"Mode"<<setw(8)<<"Count"<<setw(14)<<"Total"<<setw(14)<<"Avg"<<setw(8)<<"Share%"<<"\n  "<<string(60,'-')<<"\n";
+        for(auto&[m,e]:me){int n=mc[m];cout<<"  "<<left<<setw(16)<<m<<setw(8)<<n<<setw(14)<<fixed<<setprecision(2)<<e<<setw(14)<<e/n<<setw(8)<<setprecision(1)<<(tot>0?e/tot*100:0)<<"\n";}
+        cout<<"  "<<string(60,'-')<<"\n";
+    }
+    void ageGroupAnalysis() const{
+        if(!head){cout<<"  (no data)\n";return;}
+        const string G[]={"Children & Teenagers","University Students / Young Adults","Working Adults (Early Career)","Working Adults (Late Career)","Senior Citizens / Retirees"};
+        map<string,double>ge;map<string,int>gc;map<string,map<string,int>>gm;
+        Node*c=head;while(c){string g=ageGroupLabel(c->age);ge[g]+=c->totalEmission;gc[g]++;gm[g][c->mode]++;c=c->next;}
+        cout<<"\n  ========== AGE GROUP ANALYSIS ==========\n";
+        cout<<"  "<<left<<setw(38)<<"Group"<<setw(8)<<"Count"<<setw(14)<<"Total"<<setw(14)<<"Avg"<<setw(14)<<"Pref Mode"<<"\n  "<<string(88,'-')<<"\n";
+        for(auto&g:G){if(gc.find(g)==gc.end())continue;int n=gc[g];double e=ge[g];string pm="-";int mx=0;
+            for(auto&[m,ct]:gm[g])if(ct>mx){mx=ct;pm=m;}
+            cout<<"  "<<left<<setw(38)<<g<<setw(8)<<n<<setw(14)<<fixed<<setprecision(2)<<e<<setw(14)<<e/n<<setw(14)<<pm<<"\n";}
+        cout<<"  "<<string(88,'-')<<"\n";
+    }
+
+    // ---- EXTENDED ANALYSIS (for City A/B) ----
+    void totalEmissionsReport(char) const{carbonAnalysis();}
+    void emissionsByMode(char) const{carbonAnalysis();}
+    void transportPercentageDistribution(char) const{
+        if(!head)return;map<string,int>mc;Node*c=head;while(c){mc[c->mode]++;c=c->next;}
+        cout<<"\n  ========== TRANSPORT DISTRIBUTION ==========\n";
+        for(auto&[m,n]:mc)cout<<"  "<<left<<setw(16)<<m<<": "<<fixed<<setprecision(1)<<(double)n/count*100<<"%\n";
+    }
+    void ageGroupAnalysisExtended(char) const{ageGroupAnalysis();}
+    void topBottomEmitters(int n) const{
+        if(!head||n<=0)return;
+        vector<Node*>v;Node*c=head;while(c){v.push_back(c);c=c->next;}
+        for(int i=0;i<(int)v.size()-1;i++)for(int j=0;j<(int)v.size()-i-1;j++)if(v[j]->totalEmission>v[j+1]->totalEmission)swap(v[j],v[j+1]);
+        cout<<"\n  Top "<<n<<" emitters:\n";for(int i=(int)v.size()-1;i>=max(0,(int)v.size()-n);i--)cout<<"  "<<v[i]->residentID<<" "<<fixed<<setprecision(2)<<v[i]->totalEmission<<"\n";
+        cout<<"  Bottom "<<n<<" emitters:\n";for(int i=0;i<min(n,(int)v.size());i++)cout<<"  "<<v[i]->residentID<<" "<<fixed<<setprecision(2)<<v[i]->totalEmission<<"\n";
+    }
+    void multiConditionSearchAgeMode(int mn,int mx,const string&mode) const{
+        cout<<"\n  [Multi Search] Age "<<mn<<"-"<<mx<<" AND Mode=\""<<mode<<"\"\n";int f=0;Node*c=head;
+        while(c){string a=c->mode,b=mode;for(char&x:a)x=tolower(x);for(char&x:b)x=tolower(x);
+            if(c->age>=mn&&c->age<=mx&&a==b){cout<<"  "<<c->residentID<<" age="<<c->age<<" "<<c->mode<<" em="<<fixed<<setprecision(2)<<c->totalEmission<<"\n";f++;}c=c->next;}
+        cout<<"  Found "<<f<<"\n";
+    }
+    void multiConditionSearchDistMode(double mn,const string&mode) const{
+        cout<<"\n  [Multi Search] Dist>"<<mn<<" AND Mode=\""<<mode<<"\"\n";int f=0;Node*c=head;
+        while(c){string a=c->mode,b=mode;for(char&x:a)x=tolower(x);for(char&x:b)x=tolower(x);
+            if(c->distance>mn&&a==b){cout<<"  "<<c->residentID<<" dist="<<fixed<<setprecision(1)<<c->distance<<" "<<c->mode<<" em="<<setprecision(2)<<c->totalEmission<<"\n";f++;}c=c->next;}
+        cout<<"  Found "<<f<<"\n";
+    }
+};
