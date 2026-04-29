@@ -94,17 +94,17 @@ This project compares:
 
 ### Compile
 ```bash
-g++ main.cpp -o program
+g++ mission_control.cpp crew_list.cpp -o linked 2>&1
 ```
 
 ### Run (Linux / Mac)
 ```bash
-./program
+./linked
 ```
 
 ### Run (Windows)
 ```bash
-program.exe
+.\linked.exe
 ```
 
 ---
