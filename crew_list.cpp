@@ -1,18 +1,103 @@
-  // crew_list.cpp - all the linked list logic is in here
+  //all the linked list logic is in here
 #include "city_linkedlist.hpp"
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
 #include <string>
-#include <map>
-#include <vector>
+#include <limits>
 #include <chrono>
 using namespace std;
 
-    // nothing special in constructor/destructor just initialise head and count
-LinkedList::LinkedList() : head(nullptr), count(0) {}
+//  City A & B - Sirin    
 
+
+// ── border constants ──────────────────────────────────────────────────────
+
+static const char* RES_BORDER  =
+    "+--------+------+-------------------------------------+--------------+-----------+----------+------+----------------+";
+
+static const char* SRCH_BORDER =
+    "+--------+------+-------------------------------------+--------------+-----------+----------------+";
+
+static const char* STAT_BORDER =
+    "+----------------------+---------------------------------------------------------+";
+
+static const char* ANAL_BORDER =
+    "+-----------------------+----------+--------------------+--------------------+----------+";
+
+static const char* AGRP_BORDER =
+    "+-----------------------------------------------+---------+---------------------+---------------------+------------------+";
+
+static const char* RANK_BORDER =
+    "+--------+--------+-------+-------------------------------------+--------------+-----------------+";
+
+static const char* TRAN_BORDER =
+    "+-----------------------+------------+----------+----------------------------------+";
+
+static const char* SUB_BORDER  =
+    "+----------------------+----------+";
+
+// ── output helpers ────────────────────────────────────────────────────────
+static string fit(const string& s, int w) {
+    if ((int)s.size() <= w) return s;
+    return s.substr(0, w - 1) + "~";
+}
+
+static string fmtD(double v, int prec) {
+    ostringstream oss;
+    oss << fixed << setprecision(prec) << v;
+    return oss.str();
+}
+
+static void statRow(const string& lbl, const string& val) {
+    cout << "| " << left << setw(20) << fit(lbl, 20)
+         << " | " << left << setw(55) << fit(val, 55) << " |\n";
+}
+
+static void printSearchStats(const string& algo, double us,
+                             const string& tc, const string& sc,
+                             int found, int total) {
+    struct PlainRes { string a; int b; string c; double d, e; int f; string g; double h; };
+    struct LLNode   { PlainRes data; void* next; };
+    long long llSz  = (long long)sizeof(LLNode);
+    long long arrSz = (long long)sizeof(PlainRes);
+    string mem = to_string(total) + " nodes x " + to_string(llSz)
+               + " B = ~" + to_string((long long)total * llSz)
+               + " B  (arr ~" + to_string((long long)total * arrSz) + " B)";
+    cout << "\n" << STAT_BORDER << "\n";
+    statRow("Algorithm",        algo);
+    statRow("Time",             fmtD(us, 2) + " microseconds");
+    statRow("Time Complexity",  tc);
+    statRow("Space Complexity", sc);
+    statRow("Records Found",    to_string(found) + " / " + to_string(total));
+    statRow("Memory Usage",     mem);
+    cout << STAT_BORDER << "\n";
+}
+
+static void srchHeader() {
+    cout << SRCH_BORDER << "\n";
+    cout << "| " << left
+         << setw(6)  << "ID"             << " | "
+         << setw(4)  << "Age"            << " | "
+         << setw(35) << "Age Group"      << " | "
+         << setw(12) << "Mode"           << " | "
+         << setw(9)  << "Dist(km)"       << " | "
+         << setw(14) << "Total Emis(kg)" << " |\n";
+    cout << SRCH_BORDER << "\n";
+}
+
+static void srchRow(const Node* n) {
+    cout << "| " << left  << setw(6)  << fit(n->residentID, 6)  << " | "
+         << right << setw(4)  << n->age                           << " | "
+         << left  << setw(35) << fit(n->ageGroup, 35)             << " | "
+         << left  << setw(12) << fit(n->mode, 12)                 << " | "
+         << right << setw(9)  << fixed << setprecision(1) << n->distance      << " | "
+         << right << setw(14) << fixed << setprecision(2) << n->totalEmission << " |\n";
+}
+
+// ── constructor / destructor ──────────────────────────────────────────────
+LinkedList::LinkedList() : head(nullptr), count(0) {}
 LinkedList::~LinkedList() { clear(); }
 
 void LinkedList::clear() {
@@ -26,7 +111,6 @@ void LinkedList::clear() {
     count = 0;
 }
 
-    // scan the list and check if the same id already exists
 bool LinkedList::idExists(const string& id) const {
     Node* cur = head;
     while (cur) {
@@ -36,133 +120,7 @@ bool LinkedList::idExists(const string& id) const {
     return false;
 }
 
-       // append new node at the end
-void LinkedList::insert(const string& id, int age, const string& mode,
-                        double distance, double emFactor, int days,
-                        const string& ageGroup, double totalEmission) {
-    if (idExists(id)) {
-        cout << "  [ERROR] Resident ID \"" << id << "\" already exists. Insert cancelled.\n";
-        return;
-    }
-    Node* newNode = new Node();
-    newNode->residentID     = id;
-    newNode->age            = age;
-    newNode->mode           = mode;
-    newNode->distance       = distance;
-    newNode->emissionFactor = emFactor;
-    newNode->days           = days;
-    newNode->ageGroup       = ageGroup;
-    newNode->totalEmission  = totalEmission;
-    newNode->next           = nullptr;
-
-    if (!head) {
-        head = newNode;
-    } else {
-        Node* cur = head;
-        while (cur->next) cur = cur->next;
-        cur->next = newNode;
-    }
-    ++count;
-}
-
-      // put the new node at the very beginning
-void LinkedList::insertAtBeginning(const string& id, int age, const string& mode,
-                                   double distance, double emFactor, int days,
-                                   const string& ageGroup, double totalEmission) {
-    if (idExists(id)) {
-        cout << "  [ERROR] Resident ID \"" << id << "\" already exists. Insert cancelled.\n";
-        return;
-    }
-    Node* newNode = new Node();
-    newNode->residentID     = id;
-    newNode->age            = age;
-    newNode->mode           = mode;
-    newNode->distance       = distance;
-    newNode->emissionFactor = emFactor;
-    newNode->days           = days;
-    newNode->ageGroup       = ageGroup;
-    newNode->totalEmission  = totalEmission;
-    newNode->next           = head;
-    head = newNode;
-    ++count;
-    cout << "  Resident " << id << " inserted at the beginning.\n";
-}
-
-    // insert at a user-given position, 1 = head
-void LinkedList::insertAtPosition(int pos, const string& id, int age, const string& mode,
-                                  double distance, double emFactor, int days,
-                                  const string& ageGroup, double totalEmission) {
-    if (idExists(id)) {
-        cout << "  [ERROR] Resident ID \"" << id << "\" already exists. Insert cancelled.\n";
-        return;
-    }
-    if (pos <= 1) {
-        insertAtBeginning(id, age, mode, distance, emFactor, days, ageGroup, totalEmission);
-        return;
-    }
-    if (pos > count + 1) {
-        cout << "  [WARN] Position " << pos << " is beyond list size (" << count
-             << "). Inserting at end.\n";
-        insert(id, age, mode, distance, emFactor, days, ageGroup, totalEmission);
-        cout << "  Resident " << id << " inserted at end (position " << count << ").\n";
-        return;
-    }
-
-    Node* newNode = new Node();
-    newNode->residentID     = id;
-    newNode->age            = age;
-    newNode->mode           = mode;
-    newNode->distance       = distance;
-    newNode->emissionFactor = emFactor;
-    newNode->days           = days;
-    newNode->ageGroup       = ageGroup;
-    newNode->totalEmission  = totalEmission;
-
-    Node* cur = head;
-    for (int i = 1; i < pos - 1; ++i) cur = cur->next;
-    newNode->next = cur->next;
-    cur->next     = newNode;
-    ++count;
-    cout << "  Resident " << id << " inserted at position " << pos << ".\n";
-}
-
-// find and remove a resident by their id
-bool LinkedList::deleteResident(const string& id) {
-    if (!head) {
-        cout << "  List is empty. Nothing to delete.\n";
-        return false;
-    }
-
-    // check if its the first one
-    if (head->residentID == id) {
-        Node* tmp = head;
-        head = head->next;
-        delete tmp;
-        --count;
-        cout << "  Resident " << id << " deleted successfully.\n";
-        return true;
-    }
-
-    // otherwise keep looking
-    Node* prev = head;
-    Node* cur  = head->next;
-    while (cur) {
-        if (cur->residentID == id) {
-            prev->next = cur->next;
-            delete cur;
-            --count;
-            cout << "  Resident " << id << " deleted successfully.\n";
-            return true;
-        }
-        prev = cur;
-        cur  = cur->next;
-    }
-
-    cout << "  Resident ID \"" << id << "\" not found.\n";
-    return false;
-}
-
-// flip the whole list around
+// ── insert / delete / reverse ─────────────────────────────────────────────
 void LinkedList::reverse() {
     if (!head || !head->next) {
         cout << "  List has fewer than 2 nodes - nothing to reverse.\n";
@@ -180,7 +138,7 @@ void LinkedList::reverse() {
     cout << "  Linked list reversed successfully (" << count << " nodes).\n";
 }
 
-// read data from the csv file and load into the list
+// ── CSV I/O ───────────────────────────────────────────────────────────────
 bool LinkedList::loadFromCSV(const string& filename) {
     sourceFilename = filename;
     ifstream file(filename);
@@ -190,28 +148,24 @@ bool LinkedList::loadFromCSV(const string& filename) {
     }
 
     string line;
-    getline(file, csvHeader); // save the header row so we can restore it when saving
+    getline(file, csvHeader);
 
     int loaded = 0;
     while (getline(file, line)) {
         if (line.empty() || line == "\r") continue;
-
-        // windows files sometimes have \r at the end
         if (!line.empty() && line.back() == '\r') line.pop_back();
 
         stringstream ss(line);
         string id, ageStr, mode, distStr, emStr, daysStr, ageGroup, totalEmStr;
-
         getline(ss, id,         ',');
         getline(ss, ageStr,     ',');
         getline(ss, mode,       ',');
         getline(ss, distStr,    ',');
         getline(ss, emStr,      ',');
         getline(ss, daysStr,    ',');
-        getline(ss, ageGroup,   ',');  // column 7 - AgeGroup
-        getline(ss, totalEmStr, ',');  // column 8 - TotalMonthlyEmission
+        getline(ss, ageGroup,   ',');
+        getline(ss, totalEmStr, ',');
 
-        // clean up any extra spaces
         auto trim = [](string& s) {
             size_t start = s.find_first_not_of(" \t\r\n");
             size_t end   = s.find_last_not_of(" \t\r\n");
@@ -223,19 +177,38 @@ bool LinkedList::loadFromCSV(const string& filename) {
         if (id.empty()) continue;
 
         try {
-            int    age      = stoi(ageStr);
-            double dist     = stod(distStr);
-            double em       = stod(emStr);
-            int    days     = stoi(daysStr);
-            // use TotalMonthlyEmission from CSV if present, otherwise compute it
-            double totalEm  = totalEmStr.empty() ? (dist * em * days) : stod(totalEmStr);
-            // use AgeGroup from CSV if present, otherwise derive it from age + city
+            int    age     = stoi(ageStr);
+            double dist    = stod(distStr);
+            double em      = stod(emStr);
+            int    days    = stoi(daysStr);
+            double totalEm = totalEmStr.empty() ? (dist * em * days) : stod(totalEmStr);
             if (ageGroup.empty()) {
-                // infer city prefix from the resident ID prefix (first char of id)
                 char cityPfx = (!id.empty()) ? (char)toupper(id[0]) : '\0';
                 ageGroup = ageGroupLabel(age, cityPfx);
             }
-            insert(id, age, mode, dist, em, days, ageGroup, totalEm);
+            if (idExists(id)) {
+                cout << "  [ERROR] Resident ID \"" << id << "\" already exists. Skipping.\n";
+                continue;
+            }
+            Node* newNode = new Node();
+            newNode->residentID     = id;
+            newNode->age            = age;
+            newNode->mode           = mode;
+            newNode->distance       = dist;
+            newNode->emissionFactor = em;
+            newNode->days           = days;
+            newNode->ageGroup       = ageGroup;
+            newNode->totalEmission  = totalEm;
+            newNode->next           = nullptr;
+
+            if (!head) {
+                head = newNode;
+            } else {
+                Node* cur = head;
+                while (cur->next) cur = cur->next;
+                cur->next = newNode;
+            }
+            ++count;
             ++loaded;
         } catch (...) {
             cout << "  [WARN] Skipping bad row: " << line << "\n";
@@ -246,7 +219,6 @@ bool LinkedList::loadFromCSV(const string& filename) {
     return true;
 }
 
-// push the current linked list completely back into the csv file
 bool LinkedList::saveToCSV() const {
     if (sourceFilename.empty()) return false;
     ofstream file(sourceFilename);
@@ -254,67 +226,62 @@ bool LinkedList::saveToCSV() const {
         cout << "  [ERROR] Could not open file for writing: " << sourceFilename << "\n";
         return false;
     }
-
-    // write the original header block we saved
     if (!csvHeader.empty()) file << csvHeader << "\n";
     else file << "ResidentID,Age,ModeOfTransport,DailyDistance,CarbonEmissionFactor,AverageDayPerMonth,AgeGroup,TotalMonthlyEmission\n";
 
-    int saved = 0;
     Node* cur = head;
     while (cur) {
-        file << cur->residentID    << ","
-             << cur->age           << ","
-             << cur->mode          << ","
-             << cur->distance      << ","
+        file << cur->residentID     << ","
+             << cur->age            << ","
+             << cur->mode           << ","
+             << cur->distance       << ","
              << cur->emissionFactor << ","
-             << cur->days          << ","
-             << cur->ageGroup      << ","
+             << cur->days           << ","
+             << cur->ageGroup       << ","
              << fixed << setprecision(2) << cur->totalEmission << "\n";
         cur = cur->next;
-        saved++;
     }
-
     file.close();
-    // No print here, we will let mission_control print the success message
     return true;
 }
 
-// print all the data in a table
+// ── display ───────────────────────────────────────────────────────────────
 void LinkedList::display() const {
-    if (!head) { cout << "  (no data)\n"; return; }
-
-    cout << "\n";
-    cout << left
-         << setw(8)  << "ID"
-         << setw(6)  << "Age"
-         << setw(36) << "Age Group"
-         << setw(14) << "Mode"
-         << setw(10) << "Dist(km)"
-         << setw(12) << "EmFactor"
-         << setw(6)  << "Days"
-         << setw(14) << "TotalEmis(kg)"
-         << "\n";
-    cout << string(106, '-') << "\n";
+    if (!head) {
+        cout << "\n" << RES_BORDER << "\n";
+        cout << "| " << left << setw(113) << " (no data)" << " |\n";
+        cout << RES_BORDER << "\n";
+        return;
+    }
+    cout << "\n" << RES_BORDER << "\n";
+    cout << "| " << left
+         << setw(6)  << "ID"             << " | "
+         << setw(4)  << "Age"            << " | "
+         << setw(35) << "Age Group"      << " | "
+         << setw(12) << "Mode"           << " | "
+         << setw(9)  << "Dist(km)"       << " | "
+         << setw(8)  << "EmFac"          << " | "
+         << setw(4)  << "Days"           << " | "
+         << setw(14) << "Total Emis(kg)" << " |\n";
+    cout << RES_BORDER << "\n";
 
     Node* cur = head;
     while (cur) {
-        cout << left
-             << setw(8)  << cur->residentID
-             << setw(6)  << cur->age
-             << setw(36) << cur->ageGroup
-             << setw(14) << cur->mode
-             << setw(10) << fixed << setprecision(1) << cur->distance
-             << setw(12) << fixed << setprecision(2) << cur->emissionFactor
-             << setw(6)  << cur->days
-             << setw(14) << fixed << setprecision(2) << cur->totalEmission
-             << "\n";
+        cout << "| " << left  << setw(6)  << fit(cur->residentID, 6)   << " | "
+             << right << setw(4)  << cur->age                            << " | "
+             << left  << setw(35) << fit(cur->ageGroup, 35)              << " | "
+             << left  << setw(12) << fit(cur->mode, 12)                  << " | "
+             << right << setw(9)  << fixed << setprecision(1) << cur->distance        << " | "
+             << right << setw(8)  << fixed << setprecision(4) << cur->emissionFactor  << " | "
+             << right << setw(4)  << cur->days                                         << " | "
+             << right << setw(14) << fixed << setprecision(2) << cur->totalEmission   << " |\n";
         cur = cur->next;
     }
-    cout << string(106, '-') << "\n";
+    cout << RES_BORDER << "\n";
     cout << "  Total records: " << count << "\n";
 }
 
-// swap all the data inside two nodes, dont touch the pointers
+// ── swap helper ───────────────────────────────────────────────────────────
 void LinkedList::swapData(Node* a, Node* b) {
     swap(a->residentID,     b->residentID);
     swap(a->age,            b->age);
@@ -326,117 +293,78 @@ void LinkedList::swapData(Node* a, Node* b) {
     swap(a->totalEmission,  b->totalEmission);
 }
 
-// bubble sort by age
+// ── bubble sorts ──────────────────────────────────────────────────────────
 void LinkedList::sortByAge() {
     if (!head || !head->next) return;
-
     auto start = chrono::high_resolution_clock::now();
-
     bool swapped;
     do {
         swapped = false;
         Node* cur = head;
         while (cur->next) {
-            if (cur->age > cur->next->age) {
-                swapData(cur, cur->next);
-                swapped = true;
-            }
+            if (cur->age > cur->next->age) { swapData(cur, cur->next); swapped = true; }
             cur = cur->next;
         }
     } while (swapped);
-
-    auto end = chrono::high_resolution_clock::now();
-    lastSortMs = chrono::duration<double, milli>(end - start).count();
+    lastSortUs = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
 }
 
-// bubble sort by distance
 void LinkedList::sortByDistance() {
     if (!head || !head->next) return;
-
     auto start = chrono::high_resolution_clock::now();
-
     bool swapped;
     do {
         swapped = false;
         Node* cur = head;
         while (cur->next) {
-            if (cur->distance > cur->next->distance) {
-                swapData(cur, cur->next);
-                swapped = true;
-            }
+            if (cur->distance > cur->next->distance) { swapData(cur, cur->next); swapped = true; }
             cur = cur->next;
         }
     } while (swapped);
-
-    auto end = chrono::high_resolution_clock::now();
-    lastSortMs = chrono::duration<double, milli>(end - start).count();
+    lastSortUs = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
 }
 
-// bubble sort by total carbon emission
 void LinkedList::sortByEmission() {
     if (!head || !head->next) return;
-
     auto start = chrono::high_resolution_clock::now();
-
     bool swapped;
     do {
         swapped = false;
         Node* cur = head;
         while (cur->next) {
-            if (cur->totalEmission > cur->next->totalEmission) {
-                swapData(cur, cur->next);
-                swapped = true;
-            }
+            if (cur->totalEmission > cur->next->totalEmission) { swapData(cur, cur->next); swapped = true; }
             cur = cur->next;
         }
     } while (swapped);
-
-    auto end = chrono::high_resolution_clock::now();
-    lastSortMs = chrono::duration<double, milli>(end - start).count();
+    lastSortUs = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
 }
 
-// insertion sort by age
+// ── insertion sorts ───────────────────────────────────────────────────────
 void LinkedList::insertionSortByAge() {
     if (!head || !head->next) return;
-
     auto start = chrono::high_resolution_clock::now();
-
-    // only the sorted portion ends at 'sortedEnd'; everything after is unsorted
     Node* sortedEnd = head;
     while (sortedEnd->next) {
-        Node* key = sortedEnd->next; // the element we are about to place
+        Node* key = sortedEnd->next;
         if (key->age >= sortedEnd->age) {
-            // already in the right place, just extend the sorted section
             sortedEnd = sortedEnd->next;
         } else {
-            // detach key from its current position
             sortedEnd->next = key->next;
-
-            // find where to insert it inside the sorted section
-            if (key->age < head->age) {
-                // goes before head
-                key->next = head;
-                head = key;
-            } else {
+            if (key->age < head->age) { key->next = head; head = key; }
+            else {
                 Node* prev = head;
-                while (prev->next != key && prev->next->age <= key->age)
-                    prev = prev->next;
+                while (prev->next != key && prev->next->age <= key->age) prev = prev->next;
                 key->next  = prev->next;
                 prev->next = key;
             }
         }
     }
-
-    auto end = chrono::high_resolution_clock::now();
-    lastSortMs = chrono::duration<double, milli>(end - start).count();
+    lastSortUs = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
 }
 
-// insertion sort by daily distance
 void LinkedList::insertionSortByDistance() {
     if (!head || !head->next) return;
-
     auto start = chrono::high_resolution_clock::now();
-
     Node* sortedEnd = head;
     while (sortedEnd->next) {
         Node* key = sortedEnd->next;
@@ -444,29 +372,21 @@ void LinkedList::insertionSortByDistance() {
             sortedEnd = sortedEnd->next;
         } else {
             sortedEnd->next = key->next;
-            if (key->distance < head->distance) {
-                key->next = head;
-                head = key;
-            } else {
+            if (key->distance < head->distance) { key->next = head; head = key; }
+            else {
                 Node* prev = head;
-                while (prev->next != key && prev->next->distance <= key->distance)
-                    prev = prev->next;
+                while (prev->next != key && prev->next->distance <= key->distance) prev = prev->next;
                 key->next  = prev->next;
                 prev->next = key;
             }
         }
     }
-
-    auto end = chrono::high_resolution_clock::now();
-    lastSortMs = chrono::duration<double, milli>(end - start).count();
+    lastSortUs = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
 }
 
-// insertion sort by total carbon emission
 void LinkedList::insertionSortByEmission() {
     if (!head || !head->next) return;
-
     auto start = chrono::high_resolution_clock::now();
-
     Node* sortedEnd = head;
     while (sortedEnd->next) {
         Node* key = sortedEnd->next;
@@ -474,30 +394,21 @@ void LinkedList::insertionSortByEmission() {
             sortedEnd = sortedEnd->next;
         } else {
             sortedEnd->next = key->next;
-            if (key->totalEmission < head->totalEmission) {
-                key->next = head;
-                head = key;
-            } else {
+            if (key->totalEmission < head->totalEmission) { key->next = head; head = key; }
+            else {
                 Node* prev = head;
-                while (prev->next != key && prev->next->totalEmission <= key->totalEmission)
-                    prev = prev->next;
+                while (prev->next != key && prev->next->totalEmission <= key->totalEmission) prev = prev->next;
                 key->next  = prev->next;
                 prev->next = key;
             }
         }
     }
-
-    auto end = chrono::high_resolution_clock::now();
-    lastSortMs = chrono::duration<double, milli>(end - start).count();
+    lastSortUs = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
 }
 
-// restore the original dataset order by sorting lexicographically on the Resident ID string
-// e.g. A001 < A002 < ... < A200, B001 < B002, etc.
 void LinkedList::sortByResidentID() {
     if (!head || !head->next) return;
-
     auto start = chrono::high_resolution_clock::now();
-
     Node* sortedEnd = head;
     while (sortedEnd->next) {
         Node* key = sortedEnd->next;
@@ -505,184 +416,92 @@ void LinkedList::sortByResidentID() {
             sortedEnd = sortedEnd->next;
         } else {
             sortedEnd->next = key->next;
-            if (key->residentID < head->residentID) {
-                key->next = head;
-                head = key;
-            } else {
+            if (key->residentID < head->residentID) { key->next = head; head = key; }
+            else {
                 Node* prev = head;
-                while (prev->next != key && prev->next->residentID <= key->residentID)
-                    prev = prev->next;
+                while (prev->next != key && prev->next->residentID <= key->residentID) prev = prev->next;
                 key->next  = prev->next;
                 prev->next = key;
             }
         }
     }
-
-    auto end = chrono::high_resolution_clock::now();
-    lastSortMs = chrono::duration<double, milli>(end - start).count();
+    lastSortUs = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
 }
 
-// search for residents in an age range
+// ── linear searches ───────────────────────────────────────────────────────
 void LinkedList::linearSearchByAgeGroup(int minAge, int maxAge) const {
-    cout << "\n  [Linear Search] Age range " << minAge << " - " << maxAge << "\n";
+    cout << "\n  [Linear Search]  Age range: " << minAge << " - " << maxAge << "\n";
     auto start = chrono::high_resolution_clock::now();
-
-    cout << "\n  " << left
-         << setw(8)  << "ID"
-         << setw(6)  << "Age"
-         << setw(14) << "Mode"
-         << setw(12) << "Dist(km)"
-         << setw(14) << "TotalEmis(kg)"
-         << "\n";
-    cout << "  " << string(54, '-') << "\n";
-
+    srchHeader();
     int found = 0;
     Node* cur = head;
     while (cur) {
-        if (cur->age >= minAge && cur->age <= maxAge) {
-            cout << "  " << left
-                 << setw(8)  << cur->residentID
-                 << setw(6)  << cur->age
-                 << setw(14) << cur->mode
-                 << setw(12) << fixed << setprecision(1) << cur->distance
-                 << setw(14) << fixed << setprecision(2) << cur->totalEmission
-                 << "\n";
-            ++found;
-        }
+        if (cur->age >= minAge && cur->age <= maxAge) { srchRow(cur); ++found; }
         cur = cur->next;
     }
-
-    auto end = chrono::high_resolution_clock::now();
-    double ms = chrono::duration<double, milli>(end - start).count();
-    cout << "  " << string(54, '-') << "\n";
-    cout << "  Found " << found << " residents  |  Time: "
-         << fixed << setprecision(4) << ms << " ms\n";
-    cout << "  Time Complexity: O(n)  |  Space: O(1)\n";
+    cout << SRCH_BORDER << "\n";
+    double us = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
+    printSearchStats("Linear Search by Age", us, "O(n)", "O(1)", found, count);
 }
 
-// search by transport mode
 void LinkedList::linearSearchByMode(const string& mode) const {
-    cout << "\n  [Linear Search] Mode = \"" << mode << "\"\n";
+    cout << "\n  [Linear Search]  Mode: \"" << mode << "\"\n";
     auto start = chrono::high_resolution_clock::now();
-
-    cout << "\n  " << left
-         << setw(8)  << "ID"
-         << setw(6)  << "Age"
-         << setw(14) << "Mode"
-         << setw(12) << "Dist(km)"
-         << setw(14) << "TotalEmis(kg)"
-         << "\n";
-    cout << "  " << string(54, '-') << "\n";
-
+    srchHeader();
     int found = 0;
     Node* cur = head;
     while (cur) {
-        // lowercase both so it doesnt matter how they typed it
         string a = cur->mode, b = mode;
         for (char& c : a) c = (char)tolower(c);
         for (char& c : b) c = (char)tolower(c);
-        if (a == b) {
-            cout << "  " << left
-                 << setw(8)  << cur->residentID
-                 << setw(6)  << cur->age
-                 << setw(14) << cur->mode
-                 << setw(12) << fixed << setprecision(1) << cur->distance
-                 << setw(14) << fixed << setprecision(2) << cur->totalEmission
-                 << "\n";
-            ++found;
-        }
+        if (a == b) { srchRow(cur); ++found; }
         cur = cur->next;
     }
-
-    auto end = chrono::high_resolution_clock::now();
-    double ms = chrono::duration<double, milli>(end - start).count();
-    cout << "  " << string(54, '-') << "\n";
-    cout << "  Found " << found << " residents  |  Time: "
-         << fixed << setprecision(4) << ms << " ms\n";
-    cout << "  Time Complexity: O(n)  |  Space: O(1)\n";
+    cout << SRCH_BORDER << "\n";
+    double us = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
+    printSearchStats("Linear Search by Mode", us, "O(n)", "O(1)", found, count);
 }
 
-// find everyone who travels more than X km per day
 void LinkedList::linearSearchByDistanceThreshold(double minKm) const {
-    cout << "\n  [Linear Search] Daily Distance > " << minKm << " km\n";
+    cout << "\n  [Linear Search]  Daily Distance > " << minKm << " km\n";
     auto start = chrono::high_resolution_clock::now();
-
-    cout << "\n  " << left
-         << setw(8)  << "ID"
-         << setw(6)  << "Age"
-         << setw(14) << "Mode"
-         << setw(12) << "Dist(km)"
-         << setw(14) << "TotalEmis(kg)"
-         << "\n";
-    cout << "  " << string(54, '-') << "\n";
-
+    srchHeader();
     int found = 0;
     Node* cur = head;
     while (cur) {
-        if (cur->distance > minKm) {
-            cout << "  " << left
-                 << setw(8)  << cur->residentID
-                 << setw(6)  << cur->age
-                 << setw(14) << cur->mode
-                 << setw(12) << fixed << setprecision(1) << cur->distance
-                 << setw(14) << fixed << setprecision(2) << cur->totalEmission
-                 << "\n";
-            ++found;
-        }
+        if (cur->distance > minKm) { srchRow(cur); ++found; }
         cur = cur->next;
     }
-
-    auto end = chrono::high_resolution_clock::now();
-    double ms = chrono::duration<double, milli>(end - start).count();
-    cout << "  " << string(54, '-') << "\n";
-    cout << "  Found " << found << " residents  |  Time: "
-         << fixed << setprecision(4) << ms << " ms\n";
-    cout << "  Time Complexity: O(n)  |  Space: O(1)\n";
+    cout << SRCH_BORDER << "\n";
+    double us = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
+    printSearchStats("Linear Search by Distance", us, "O(n)", "O(1)", found, count);
 }
 
-// binary search by age, but the list has to be sorted first
+// ── binary search ─────────────────────────────────────────────────────────
 void LinkedList::binarySearchByAge(int targetAge) const {
-    cout << "\n  [Binary Search] Age = " << targetAge
-         << "  (requires list sorted by age!)\n";
+    cout << "\n  [Binary Search]  Age = " << targetAge
+         << "  (list must be sorted by age first)\n";
     auto start = chrono::high_resolution_clock::now();
 
-    // linked lists cant do random access so we make a temporary array of pointers
     Node** arr = new Node*[count];
     Node* cur = head;
     for (int i = 0; i < count; ++i, cur = cur->next) arr[i] = cur;
 
     int lo = 0, hi = count - 1, found = 0;
-    cout << "\n  Binary Search Steps:\n";
+    cout << "\n  Steps:\n";
     int step = 1;
-
     while (lo <= hi) {
         int mid = lo + (hi - lo) / 2;
-        cout << "    Step " << step++ << ": lo=" << lo << " hi=" << hi
-             << " mid=" << mid << " (age=" << arr[mid]->age << ")\n";
+        cout << "    [" << step++ << "] lo=" << lo << "  hi=" << hi
+             << "  mid=" << mid << "  (age=" << arr[mid]->age << ")\n";
         if (arr[mid]->age == targetAge) {
-            // spread out from the middle to catch everyone with that age
             int L = mid, R = mid;
-            while (L > 0    && arr[L-1]->age == targetAge) --L;
+            while (L > 0       && arr[L-1]->age == targetAge) --L;
             while (R < count-1 && arr[R+1]->age == targetAge) ++R;
-
-            cout << "\n  " << left
-                 << setw(8)  << "ID"
-                 << setw(6)  << "Age"
-                 << setw(14) << "Mode"
-                 << setw(12) << "Dist(km)"
-                 << setw(14) << "TotalEmis(kg)"
-                 << "\n";
-            cout << "  " << string(54, '-') << "\n";
-            for (int i = L; i <= R; ++i) {
-                cout << "  " << left
-                     << setw(8)  << arr[i]->residentID
-                     << setw(6)  << arr[i]->age
-                     << setw(14) << arr[i]->mode
-                     << setw(12) << fixed << setprecision(1) << arr[i]->distance
-                     << setw(14) << fixed << setprecision(2) << arr[i]->totalEmission
-                     << "\n";
-                ++found;
-            }
+            cout << "\n";
+            srchHeader();
+            for (int i = L; i <= R; ++i) { srchRow(arr[i]); ++found; }
+            cout << SRCH_BORDER << "\n";
             break;
         } else if (arr[mid]->age < targetAge) {
             lo = mid + 1;
@@ -690,21 +509,18 @@ void LinkedList::binarySearchByAge(int targetAge) const {
             hi = mid - 1;
         }
     }
-
     delete[] arr;
 
-    auto end = chrono::high_resolution_clock::now();
-    double ms = chrono::duration<double, milli>(end - start).count();
-    if (found == 0) cout << "  No residents found with age " << targetAge << "\n";
-    else            cout << "  " << string(54, '-') << "\n";
-    cout << "  Found " << found << " residents  |  Time: "
-         << fixed << setprecision(4) << ms << " ms\n";
-    cout << "  Time Complexity: O(log n) [on index array]  |  Space: O(n) [index]\n";
-    cout << "  Note: Pure linked list binary search is O(n) because random access\n"
-         << "        requires traversal. An index array is used here for demonstration.\n";
+    double us = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
+    if (found == 0)
+        cout << "\n  No residents found with age " << targetAge << "\n";
+    printSearchStats("Binary Search by Age", us,
+                     "O(log n) [on index array]", "O(n) [index array]", found, count);
+    if (found == 0)
+        cout << "  Note: sort by age first for accurate binary search results.\n";
 }
 
-// figure out which age group a person belongs to, using the exact labels from each city's dataset
+// ── age group label ───────────────────────────────────────────────────────
 string LinkedList::ageGroupLabel(int age, char cityPrefix) {
     if (cityPrefix == 'A') {
         if (age >= 26 && age <= 45) return "Working Adults (Early Career)";
@@ -716,7 +532,6 @@ string LinkedList::ageGroupLabel(int age, char cityPrefix) {
         if (age >= 18 && age <= 25) return "University Students / Young Adults";
         return "Unknown";
     }
-    // City C and fallback - mix of both young and adult groups
     if (age >=  6 && age <= 17) return "Children & Teenagers";
     if (age >= 18 && age <= 25) return "University Students / Young Adults";
     if (age >= 26 && age <= 45) return "Working Adults (Early Career)";
@@ -725,57 +540,64 @@ string LinkedList::ageGroupLabel(int age, char cityPrefix) {
     return "Unknown";
 }
 
-// shows total emissions and a breakdown by transport mode
+// ── carbon analysis ───────────────────────────────────────────────────────
 void LinkedList::carbonAnalysis() const {
     if (!head) { cout << "  (no data)\n"; return; }
 
-    map<string, double> modeEmission;
-    map<string, int>    modeCount;
+    struct ModeData { string mode; double emission; int count; };
+    ModeData modes[100];
+    int modeCount_arr = 0;
     double totalEmission = 0.0;
 
     Node* cur = head;
     while (cur) {
-        modeEmission[cur->mode] += cur->totalEmission;
-        modeCount[cur->mode]++;
+        int idx = -1;
+        for (int i = 0; i < modeCount_arr; i++) {
+            if (modes[i].mode == cur->mode) { idx = i; break; }
+        }
+        if (idx == -1) {
+            modes[modeCount_arr].mode = cur->mode;
+            modes[modeCount_arr].emission = cur->totalEmission;
+            modes[modeCount_arr].count = 1;
+            modeCount_arr++;
+        } else {
+            modes[idx].emission += cur->totalEmission;
+            modes[idx].count++;
+        }
         totalEmission += cur->totalEmission;
         cur = cur->next;
     }
 
-    cout << "\n  ========== CARBON EMISSION ANALYSIS ==========\n";
-    cout << "  Total residents: " << count << "\n";
-    cout << fixed << setprecision(2);
-    cout << "  Total carbon emissions: " << totalEmission << " kg CO2/month\n";
-    cout << "  Average per resident:   " << totalEmission / count << " kg CO2/month\n";
+    cout << "\n  ===== CARBON EMISSION ANALYSIS =====\n";
+    cout << "  Residents: " << count
+         << "   |   Total: " << fixed << setprecision(2) << totalEmission << " kg CO2/month"
+         << "   |   Avg: " << (count ? totalEmission / count : 0.0) << " kg CO2/month\n\n";
 
-    cout << "\n  " << left
-         << setw(22) << "Mode of Transport"
-         << setw(10) << "Count"
-         << setw(18) << "Total Emis (kg)"
-         << setw(18) << "Avg per Resident"
-         << setw(8)  << "Share %"
-         << "\n";
-    cout << "  " << string(76, '-') << "\n";
+    cout << ANAL_BORDER << "\n";
+    cout << "| " << left
+         << setw(21) << "Mode of Transport" << " | "
+         << setw(8)  << "Count"             << " | "
+         << setw(18) << "Total Emis (kg)"   << " | "
+         << setw(18) << "Avg/Resident (kg)" << " | "
+         << setw(8)  << "Share %"           << " |\n";
+    cout << ANAL_BORDER << "\n";
 
-    for (auto& [mode, em] : modeEmission) {
-        int    cnt = modeCount[mode];
-        double avg = em / cnt;
-        double pct = (totalEmission > 0) ? (em / totalEmission * 100.0) : 0.0;
-        cout << "  " << left
-             << setw(22) << mode
-             << setw(10) << cnt
-             << setw(18) << fixed << setprecision(2) << em
-             << setw(18) << fixed << setprecision(2) << avg
-             << setw(8)  << fixed << setprecision(1) << pct
-             << "\n";
+    for (int i = 0; i < modeCount_arr; i++) {
+        double avg = modes[i].emission / modes[i].count;
+        double pct = (totalEmission > 0) ? (modes[i].emission / totalEmission * 100.0) : 0.0;
+        cout << "| " << left  << setw(21) << fit(modes[i].mode, 21) << " | "
+             << right << setw(8)  << modes[i].count                    << " | "
+             << right << setw(18) << fixed << setprecision(2) << modes[i].emission  << " | "
+             << right << setw(18) << fixed << setprecision(2) << avg << " | "
+             << right << setw(8)  << fixed << setprecision(1) << pct << " |\n";
     }
-    cout << "  " << string(76, '-') << "\n";
+    cout << ANAL_BORDER << "\n";
 }
 
-// breaks down emissions and preferred transport by age group
+// ── age group analysis ────────────────────────────────────────────────────
 void LinkedList::ageGroupAnalysis() const {
     if (!head) { cout << "  (no data)\n"; return; }
 
-    // all possible labels that appear across the datasets, in display order
     const string GROUPS[] = {
         "Children & Teenagers",
         "University Students / Young Adults",
@@ -785,221 +607,277 @@ void LinkedList::ageGroupAnalysis() const {
         "Unknown"
     };
 
-    map<string, double>             groupEmission;
-    map<string, int>                groupCount;
-    map<string, map<string,int>>    groupModeCount;
+    struct GroupData { string name; double emission; int count; int minAge; int maxAge; };
+    struct ModeInfo { string mode; int count; };
+    struct GroupDetail { string groupName; ModeInfo modes[20]; int modeCount; };
+    
+    GroupData groups[6];
+    GroupDetail groupDetails[6];
+    int groupCount_arr = 0;
+
+    for (int i = 0; i < 6; i++) {
+        groups[i].name = GROUPS[i];
+        groups[i].emission = 0.0;
+        groups[i].count = 0;
+        groups[i].minAge = 9999;
+        groups[i].maxAge = -1;
+        groupDetails[i].groupName = GROUPS[i];
+        groupDetails[i].modeCount = 0;
+    }
 
     Node* cur = head;
     while (cur) {
-        // use the stored ageGroup directly - no re-computation needed
-        const string& grp = cur->ageGroup;
-        groupEmission[grp]          += cur->totalEmission;
-        groupCount[grp]++;
-        groupModeCount[grp][cur->mode]++;
+        int gIdx = -1;
+        for (int i = 0; i < 6; i++) {
+            if (groups[i].name == cur->ageGroup) { gIdx = i; break; }
+        }
+        if (gIdx >= 0) {
+            groups[gIdx].emission += cur->totalEmission;
+            groups[gIdx].count++;
+            if (cur->age < groups[gIdx].minAge) groups[gIdx].minAge = cur->age;
+            if (cur->age > groups[gIdx].maxAge) groups[gIdx].maxAge = cur->age;
+            
+            int mIdx = -1;
+            for (int j = 0; j < groupDetails[gIdx].modeCount; j++) {
+                if (groupDetails[gIdx].modes[j].mode == cur->mode) { mIdx = j; break; }
+            }
+            if (mIdx == -1) {
+                groupDetails[gIdx].modes[groupDetails[gIdx].modeCount].mode = cur->mode;
+                groupDetails[gIdx].modes[groupDetails[gIdx].modeCount].count = 1;
+                groupDetails[gIdx].modeCount++;
+            } else {
+                groupDetails[gIdx].modes[mIdx].count++;
+            }
+        }
         cur = cur->next;
     }
 
-    cout << "\n  ========== AGE GROUP ANALYSIS ==========\n";
-    cout << "\n  " << left
-         << setw(38) << "Age Group"
-         << setw(8)  << "Count"
-         << setw(20) << "Total Emis (kg)"
-         << setw(20) << "Avg Emis/Resident"
-         << setw(18) << "Preferred Mode"
-         << "\n";
-    cout << "  " << string(104, '-') << "\n";
+    cout << "\n  ===== AGE GROUP ANALYSIS =====\n\n";
+    cout << AGRP_BORDER << "\n";
+    cout << "| " << left
+         << setw(45) << "Age Group (min-max)"         << " | "
+         << setw(7)  << "Count"             << " | "
+         << setw(19) << "Total Emis (kg)"   << " | "
+         << setw(19) << "Avg/Resident (kg)" << " | "
+         << setw(16) << "Preferred Mode"    << " |\n";
+    cout << AGRP_BORDER << "\n";
 
-    for (const string& grp : GROUPS) {
-        if (groupCount.find(grp) == groupCount.end()) continue;
-        int    cnt = groupCount[grp];
-        double em  = groupEmission[grp];
-        double avg = em / cnt;
-
-        // whichever mode has the most people in this group
-        string prefMode = "-";
-        int    maxCnt   = 0;
-        for (auto& [m, c] : groupModeCount[grp]) {
-            if (c > maxCnt) { maxCnt = c; prefMode = m; }
-        }
-
-        cout << "  " << left
-             << setw(38) << grp
-             << setw(8)  << cnt
-             << setw(20) << fixed << setprecision(2) << em
-             << setw(20) << fixed << setprecision(2) << avg
-             << setw(18) << prefMode
-             << "\n";
+    for (int i = 0; i < 6; i++) {
+        if (groups[i].count == 0) continue;
+        double avg = groups[i].emission / groups[i].count;
+        string prefMode = "-"; int maxCnt = 0;
+        for (int j = 0; j < groupDetails[i].modeCount; j++)
+            if (groupDetails[i].modes[j].count > maxCnt) { 
+                maxCnt = groupDetails[i].modes[j].count; 
+                prefMode = groupDetails[i].modes[j].mode; 
+            }
+        string grpLabel = groups[i].name + " (" + to_string(groups[i].minAge) + "-" + to_string(groups[i].maxAge) + ")";
+        cout << "| " << left  << setw(45) << fit(grpLabel, 45)      << " | "
+             << right << setw(7)  << groups[i].count                         << " | "
+             << right << setw(19) << fixed << setprecision(2) << groups[i].emission  << " | "
+             << right << setw(19) << fixed << setprecision(2) << avg << " | "
+             << left  << setw(16) << fit(prefMode, 16)           << " |\n";
     }
-    cout << "  " << string(104, '-') << "\n";
+    cout << AGRP_BORDER << "\n";
 
-    // show mode counts for each group
-    cout << "\n  Detailed mode breakdown per age group:\n\n";
-    for (const string& grp : GROUPS) {
-        if (groupModeCount.find(grp) == groupModeCount.end()) continue;
-        cout << "  >> " << grp << "\n";
-        cout << "     " << left << setw(20) << "Mode" << setw(8) << "Count" << "\n";
-        for (auto& [m, c] : groupModeCount[grp]) {
-            cout << "     " << left << setw(20) << m << setw(8) << c << "\n";
-        }
-        cout << "\n";
+    cout << "\n  Mode breakdown per group:\n";
+    for (int i = 0; i < 6; i++) {
+        if (groupDetails[i].modeCount == 0) continue;
+        cout << "\n  >> " << groupDetails[i].groupName << "\n";
+        cout << "  " << SUB_BORDER << "\n";
+        cout << "  | " << left << setw(20) << "Mode" << " | " << setw(8) << "Count" << " |\n";
+        cout << "  " << SUB_BORDER << "\n";
+        for (int j = 0; j < groupDetails[i].modeCount; j++)
+            cout << "  | " << left << setw(20) << fit(groupDetails[i].modes[j].mode, 20) << " | " << right << setw(8) << groupDetails[i].modes[j].count << " |\n";
+        cout << "  " << SUB_BORDER << "\n";
     }
 }
 
-// ==============================================================
-//  EXTENDED ANALYSIS METHODS (City A and B only)
-// ==============================================================
+// ── extended analysis (City A and B) ─────────────────────────────────────
 
-// 1. Total emissions summary with per-mode breakdown and insight
 void LinkedList::totalEmissionsReport(char city) const {
     if (!head) { cout << "  (no data)\n"; return; }
 
-    map<string, double> modeEm;
-    map<string, int>    modeCnt;
+    struct ModeData { string mode; double emission; int count; };
+    ModeData modes[100];
+    int modeCount_arr = 0;
     double total = 0.0;
 
     Node* cur = head;
     while (cur) {
-        modeEm[cur->mode]  += cur->totalEmission;
-        modeCnt[cur->mode]++;
+        int idx = -1;
+        for (int i = 0; i < modeCount_arr; i++) {
+            if (modes[i].mode == cur->mode) { idx = i; break; }
+        }
+        if (idx == -1) {
+            modes[modeCount_arr].mode = cur->mode;
+            modes[modeCount_arr].emission = cur->totalEmission;
+            modes[modeCount_arr].count = 1;
+            modeCount_arr++;
+        } else {
+            modes[idx].emission += cur->totalEmission;
+            modes[idx].count++;
+        }
         total += cur->totalEmission;
         cur = cur->next;
     }
 
-    cout << "\n  ========== TOTAL EMISSIONS SUMMARY - CITY " << city << " ==========\n";
-    cout << fixed << setprecision(2);
-    cout << "  Total Residents     : " << count << "\n";
-    cout << "  Total CO2 Emitted   : " << total << " kg CO2/month\n";
-    cout << "  Average per Resident: " << (count > 0 ? total / count : 0.0) << " kg CO2/month\n";
+    cout << "\n  ===== TOTAL EMISSIONS SUMMARY - CITY " << city << " =====\n";
+    cout << "  Residents: " << count
+         << "   |   Total: " << fixed << setprecision(2) << total << " kg CO2/month"
+         << "   |   Avg: " << (count ? total / count : 0.0) << " kg CO2/month\n\n";
 
-    cout << "\n  " << left
-         << setw(22) << "Mode"
-         << setw(10) << "Residents"
-         << setw(20) << "Total Emis (kg)"
-         << setw(20) << "Avg/Resident (kg)"
-         << setw(10) << "Share %"
-         << "\n";
-    cout << "  " << string(82, '-') << "\n";
+    cout << ANAL_BORDER << "\n";
+    cout << "| " << left
+         << setw(21) << "Mode"              << " | "
+         << setw(8)  << "Residents"         << " | "
+         << setw(18) << "Total Emis (kg)"   << " | "
+         << setw(18) << "Avg/Resident (kg)" << " | "
+         << setw(8)  << "Share %"           << " |\n";
+    cout << ANAL_BORDER << "\n";
 
     string topMode; double topEm = -1.0;
-    for (auto& [mode, em] : modeEm) {
-        int    cnt = modeCnt[mode];
-        double avg = em / cnt;
-        double pct = (total > 0) ? (em / total * 100.0) : 0.0;
-        cout << "  " << left
-             << setw(22) << mode
-             << setw(10) << cnt
-             << setw(20) << fixed << setprecision(2) << em
-             << setw(20) << fixed << setprecision(2) << avg
-             << setw(10) << fixed << setprecision(1) << pct << "\n";
-        if (em > topEm) { topEm = em; topMode = mode; }
+    for (int i = 0; i < modeCount_arr; i++) {
+        double avg = modes[i].emission / modes[i].count;
+        double pct = (total > 0) ? (modes[i].emission / total * 100.0) : 0.0;
+        cout << "| " << left  << setw(21) << fit(modes[i].mode, 21) << " | "
+             << right << setw(8)  << modes[i].count                    << " | "
+             << right << setw(18) << fixed << setprecision(2) << modes[i].emission  << " | "
+             << right << setw(18) << fixed << setprecision(2) << avg << " | "
+             << right << setw(8)  << fixed << setprecision(1) << pct << " |\n";
+        if (modes[i].emission > topEm) { topEm = modes[i].emission; topMode = modes[i].mode; }
     }
-    cout << "  " << string(82, '-') << "\n";
+    cout << ANAL_BORDER << "\n";
 
     double topPct = (total > 0) ? (topEm / total * 100.0) : 0.0;
-    cout << "\n  >> Insight: " << topMode << " usage contributes the majority of emissions"
-         << " in City " << city << " (" << fixed << setprecision(1) << topPct << "%).\n";
+    cout << "\n  >> Insight: " << topMode << " contributes the most emissions in City "
+         << city << " (" << fixed << setprecision(1) << topPct << "%).\n";
 }
 
-// 2. Emissions by transport mode, sorted descending with insights
 void LinkedList::emissionsByMode(char city) const {
     if (!head) { cout << "  (no data)\n"; return; }
 
-    map<string, double> modeEm;
-    map<string, int>    modeCnt;
+    struct ModeData { double emission; string mode; int count; };
+    ModeData modes[100];
+    int modeCount_arr = 0;
     double total = 0.0;
 
     Node* cur = head;
     while (cur) {
-        modeEm[cur->mode]  += cur->totalEmission;
-        modeCnt[cur->mode]++;
+        int idx = -1;
+        for (int i = 0; i < modeCount_arr; i++) {
+            if (modes[i].mode == cur->mode) { idx = i; break; }
+        }
+        if (idx == -1) {
+            modes[modeCount_arr].mode = cur->mode;
+            modes[modeCount_arr].emission = cur->totalEmission;
+            modes[modeCount_arr].count = 1;
+            modeCount_arr++;
+        } else {
+            modes[idx].emission += cur->totalEmission;
+            modes[idx].count++;
+        }
         total += cur->totalEmission;
         cur = cur->next;
     }
 
-    // collect and sort modes descending by total emission (simple bubble)
-    vector<pair<double, string>> sorted;
-    for (auto& [mode, em] : modeEm) sorted.push_back({em, mode});
-    for (int i = 0; i < (int)sorted.size() - 1; i++)
-        for (int j = i+1; j < (int)sorted.size(); j++)
-            if (sorted[j].first > sorted[i].first) swap(sorted[i], sorted[j]);
+    for (int i = 0; i < modeCount_arr - 1; i++)
+        for (int j = i+1; j < modeCount_arr; j++)
+            if (modes[j].emission > modes[i].emission) {
+                ModeData tmp = modes[i];
+                modes[i] = modes[j];
+                modes[j] = tmp;
+            }
 
-    cout << "\n  ========== EMISSIONS BY TRANSPORT MODE - CITY " << city << " ==========\n";
-    cout << "\n  " << left
-         << setw(22) << "Mode"
-         << setw(10) << "Residents"
-         << setw(20) << "Total Emis (kg)"
-         << setw(20) << "Avg/Resident (kg)"
-         << setw(10) << "Share %"
-         << "\n";
-    cout << "  " << string(82, '-') << "\n";
+    cout << "\n  ===== EMISSIONS BY TRANSPORT MODE - CITY " << city << " =====\n\n";
+    cout << ANAL_BORDER << "\n";
+    cout << "| " << left
+         << setw(21) << "Mode"              << " | "
+         << setw(8)  << "Residents"         << " | "
+         << setw(18) << "Total Emis (kg)"   << " | "
+         << setw(18) << "Avg/Resident (kg)" << " | "
+         << setw(8)  << "Share %"           << " |\n";
+    cout << ANAL_BORDER << "\n";
 
-    for (auto& [em, mode] : sorted) {
-        int    cnt = modeCnt[mode];
-        double avg = (cnt > 0) ? em / cnt : 0.0;
-        double pct = (total > 0) ? (em / total * 100.0) : 0.0;
-        cout << "  " << left
-             << setw(22) << mode
-             << setw(10) << cnt
-             << setw(20) << fixed << setprecision(2) << em
-             << setw(20) << fixed << setprecision(2) << avg
-             << setw(10) << fixed << setprecision(1) << pct << "\n";
+    for (int i = 0; i < modeCount_arr; i++) {
+        double avg = (modes[i].count > 0) ? modes[i].emission / modes[i].count : 0.0;
+        double pct = (total > 0) ? (modes[i].emission / total * 100.0) : 0.0;
+        cout << "| " << left  << setw(21) << fit(modes[i].mode, 21) << " | "
+             << right << setw(8)  << modes[i].count                    << " | "
+             << right << setw(18) << fixed << setprecision(2) << modes[i].emission  << " | "
+             << right << setw(18) << fixed << setprecision(2) << avg << " | "
+             << right << setw(8)  << fixed << setprecision(1) << pct << " |\n";
     }
-    cout << "  " << string(82, '-') << "\n";
+    cout << ANAL_BORDER << "\n";
 
-    string highMode = sorted.front().second;
-    string lowMode  = sorted.back().second;
-    double highPct  = (total > 0) ? (sorted.front().first / total * 100.0) : 0.0;
-    double lowPct   = (total > 0) ? (sorted.back().first  / total * 100.0) : 0.0;
-    cout << "\n  >> Insight: " << highMode << " is the highest emitting transport mode in City "
-         << city << " (" << fixed << setprecision(1) << highPct << "%).\n";
-    cout << "  >> Insight: " << lowMode  << " produces the fewest emissions in City "
-         << city << " (" << fixed << setprecision(1) << lowPct  << "%).\n";
+    if (modeCount_arr > 0) {
+        cout << "\n  >> Insight: " << modes[0].mode
+             << " is the highest emitting mode in City " << city << " ("
+             << fixed << setprecision(1) << (modes[0].emission / total * 100.0) << "%).\n";
+        cout << "  >> Insight: " << modes[modeCount_arr - 1].mode
+             << " produces the fewest emissions in City " << city << " ("
+             << fixed << setprecision(1) << (modes[modeCount_arr - 1].emission / total * 100.0) << "%).\n";
+    }
 }
 
-// 3. Transport percentage distribution (count-based) with ASCII bar chart
 void LinkedList::transportPercentageDistribution(char city) const {
     if (!head) { cout << "  (no data)\n"; return; }
 
-    map<string, int> modeCnt;
+    struct ModeCount { int count; string mode; };
+    ModeCount modes[100];
+    int modeCount_arr = 0;
     Node* cur = head;
-    while (cur) { modeCnt[cur->mode]++; cur = cur->next; }
+    while (cur) {
+        int idx = -1;
+        for (int i = 0; i < modeCount_arr; i++) {
+            if (modes[i].mode == cur->mode) { idx = i; break; }
+        }
+        if (idx == -1) {
+            modes[modeCount_arr].mode = cur->mode;
+            modes[modeCount_arr].count = 1;
+            modeCount_arr++;
+        } else {
+            modes[idx].count++;
+        }
+        cur = cur->next;
+    }
 
-    // sort descending by count
-    vector<pair<int, string>> sorted;
-    for (auto& [mode, cnt] : modeCnt) sorted.push_back({cnt, mode});
-    for (int i = 0; i < (int)sorted.size() - 1; i++)
-        for (int j = i+1; j < (int)sorted.size(); j++)
-            if (sorted[j].first > sorted[i].first) swap(sorted[i], sorted[j]);
+    for (int i = 0; i < modeCount_arr - 1; i++)
+        for (int j = i+1; j < modeCount_arr; j++)
+            if (modes[j].count > modes[i].count) {
+                ModeCount tmp = modes[i];
+                modes[i] = modes[j];
+                modes[j] = tmp;
+            }
 
-    cout << "\n  ========== TRANSPORT PERCENTAGE DISTRIBUTION - CITY " << city << " ==========\n";
-    cout << "\n  " << left
-         << setw(22) << "Mode"
-         << setw(12) << "Residents"
-         << setw(10) << "Share %"
-         << "  Distribution Bar\n";
-    cout << "  " << string(74, '-') << "\n";
+    cout << "\n  ===== TRANSPORT PERCENTAGE DISTRIBUTION - CITY " << city << " =====\n\n";
+    cout << TRAN_BORDER << "\n";
+    cout << "| " << left
+         << setw(21) << "Mode"       << " | "
+         << setw(10) << "Residents"  << " | "
+         << setw(8)  << "Share %"    << " | "
+         << setw(32) << "Distribution" << " |\n";
+    cout << TRAN_BORDER << "\n";
 
     const int BAR_WIDTH = 30;
     string topMode; int topCnt = 0;
-    for (auto& [cnt, mode] : sorted) {
-        double pct  = (count > 0) ? (cnt * 100.0 / count) : 0.0;
+    for (int i = 0; i < modeCount_arr; i++) {
+        double pct  = (count > 0) ? (modes[i].count * 100.0 / count) : 0.0;
         int    bars = (int)(pct / 100.0 * BAR_WIDTH);
-        string bar  = string(bars, '#') + string(BAR_WIDTH - bars, '.');
-        cout << "  " << left
-             << setw(22) << mode
-             << setw(12) << cnt
-             << setw(10) << fixed << setprecision(1) << pct
-             << "  [" << bar << "]\n";
-        if (cnt > topCnt) { topCnt = cnt; topMode = mode; }
+        string bar  = "[" + string(bars, '#') + string(BAR_WIDTH - bars, '.') + "]";
+        cout << "| " << left  << setw(21) << fit(modes[i].mode, 21) << " | "
+             << right << setw(10) << modes[i].count                    << " | "
+             << right << setw(8)  << fixed << setprecision(1) << pct << " | "
+             << left  << setw(32) << bar                    << " |\n";
+        if (modes[i].count > topCnt) { topCnt = modes[i].count; topMode = modes[i].mode; }
     }
-    cout << "  " << string(74, '-') << "\n";
+    cout << TRAN_BORDER << "\n";
 
     double topPct = (count > 0) ? (topCnt * 100.0 / count) : 0.0;
-    cout << "\n  >> Insight: " << topMode << " is the most commonly used transport mode in City "
+    cout << "\n  >> Insight: " << topMode << " is the most-used mode in City "
          << city << " (" << fixed << setprecision(1) << topPct << "% of residents).\n";
 }
 
-// 4. Extended age group analysis with top-group insight
 void LinkedList::ageGroupAnalysisExtended(char city) const {
     if (!head) { cout << "  (no data)\n"; return; }
 
@@ -1012,75 +890,111 @@ void LinkedList::ageGroupAnalysisExtended(char city) const {
         "Unknown"
     };
 
-    map<string, double>           groupEm;
-    map<string, int>              groupCnt;
-    map<string, map<string,int>>  groupMode;
+    struct GroupData { string name; double emission; int count; int minAge; int maxAge; };
+    struct ModeInfo { string mode; int count; };
+    struct GroupDetail { string groupName; ModeInfo modes[20]; int modeCount; };
+    
+    GroupData groups[6];
+    GroupDetail groupDetails[6];
+
+    for (int i = 0; i < 6; i++) {
+        groups[i].name = GROUPS[i];
+        groups[i].emission = 0.0;
+        groups[i].count = 0;
+        groups[i].minAge = 9999;
+        groups[i].maxAge = -1;
+        groupDetails[i].groupName = GROUPS[i];
+        groupDetails[i].modeCount = 0;
+    }
 
     Node* cur = head;
     while (cur) {
-        const string& g = cur->ageGroup;
-        groupEm[g]  += cur->totalEmission;
-        groupCnt[g]++;
-        groupMode[g][cur->mode]++;
+        int gIdx = -1;
+        for (int i = 0; i < 6; i++) {
+            if (groups[i].name == cur->ageGroup) { gIdx = i; break; }
+        }
+        if (gIdx >= 0) {
+            groups[gIdx].emission += cur->totalEmission;
+            groups[gIdx].count++;
+            if (cur->age < groups[gIdx].minAge) groups[gIdx].minAge = cur->age;
+            if (cur->age > groups[gIdx].maxAge) groups[gIdx].maxAge = cur->age;
+            
+            int mIdx = -1;
+            for (int j = 0; j < groupDetails[gIdx].modeCount; j++) {
+                if (groupDetails[gIdx].modes[j].mode == cur->mode) { mIdx = j; break; }
+            }
+            if (mIdx == -1) {
+                groupDetails[gIdx].modes[groupDetails[gIdx].modeCount].mode = cur->mode;
+                groupDetails[gIdx].modes[groupDetails[gIdx].modeCount].count = 1;
+                groupDetails[gIdx].modeCount++;
+            } else {
+                groupDetails[gIdx].modes[mIdx].count++;
+            }
+        }
         cur = cur->next;
     }
 
-    cout << "\n  ========== AGE GROUP ANALYSIS - CITY " << city << " ==========\n";
-    cout << "\n  " << left
-         << setw(38) << "Age Group"
-         << setw(8)  << "Count"
-         << setw(20) << "Total Emis (kg)"
-         << setw(20) << "Avg/Resident (kg)"
-         << setw(18) << "Preferred Mode"
-         << "\n";
-    cout << "  " << string(104, '-') << "\n";
+    cout << "\n  ===== AGE GROUP ANALYSIS - CITY " << city << " =====\n\n";
+    cout << AGRP_BORDER << "\n";
+    cout << "| " << left
+         << setw(45) << "Age Group (min-max)"         << " | "
+         << setw(7)  << "Count"             << " | "
+         << setw(19) << "Total Emis (kg)"   << " | "
+         << setw(19) << "Avg/Resident (kg)" << " | "
+         << setw(16) << "Preferred Mode"    << " |\n";
+    cout << AGRP_BORDER << "\n";
 
-    string topGroup; double topGroupEm = -1.0;
-    for (const string& g : GROUPS) {
-        if (groupCnt.find(g) == groupCnt.end()) continue;
-        int    cnt      = groupCnt[g];
-        double em       = groupEm[g];
-        double avg      = em / cnt;
+    string topGroup; double topGroupEm = -1.0; int topGroupIdx = -1;
+    for (int i = 0; i < 6; i++) {
+        if (groups[i].count == 0) continue;
+        double avg = groups[i].emission / groups[i].count;
         string prefMode = "-"; int maxC = 0;
-        for (auto& [m, c] : groupMode[g]) if (c > maxC) { maxC = c; prefMode = m; }
-
-        cout << "  " << left
-             << setw(38) << g
-             << setw(8)  << cnt
-             << setw(20) << fixed << setprecision(2) << em
-             << setw(20) << fixed << setprecision(2) << avg
-             << setw(18) << prefMode << "\n";
-        if (em > topGroupEm) { topGroupEm = em; topGroup = g; }
+        for (int j = 0; j < groupDetails[i].modeCount; j++)
+            if (groupDetails[i].modes[j].count > maxC) { 
+                maxC = groupDetails[i].modes[j].count; 
+                prefMode = groupDetails[i].modes[j].mode; 
+            }
+        string grpLabel = groups[i].name + " (" + to_string(groups[i].minAge) + "-" + to_string(groups[i].maxAge) + ")";
+        cout << "| " << left  << setw(45) << fit(grpLabel, 45)         << " | "
+             << right << setw(7)  << groups[i].count                          << " | "
+             << right << setw(19) << fixed << setprecision(2) << groups[i].emission  << " | "
+             << right << setw(19) << fixed << setprecision(2) << avg << " | "
+             << left  << setw(16) << fit(prefMode, 16)            << " |\n";
+        if (groups[i].emission > topGroupEm) { topGroupEm = groups[i].emission; topGroup = groups[i].name; topGroupIdx = i; }
     }
-    cout << "  " << string(104, '-') << "\n";
+    cout << AGRP_BORDER << "\n";
 
-    // detailed mode breakdown per group
-    cout << "\n  Detailed mode breakdown per age group:\n\n";
-    for (const string& g : GROUPS) {
-        if (groupMode.find(g) == groupMode.end()) continue;
-        cout << "  >> " << g << "\n";
-        cout << "     " << left << setw(20) << "Mode" << setw(8) << "Count" << "\n";
-        for (auto& [m, c] : groupMode[g])
-            cout << "     " << left << setw(20) << m << setw(8) << c << "\n";
-        cout << "\n";
+    cout << "\n  Mode breakdown per group:\n";
+    for (int i = 0; i < 6; i++) {
+        if (groupDetails[i].modeCount == 0) continue;
+        cout << "\n  >> " << groupDetails[i].groupName << "\n";
+        cout << "  " << SUB_BORDER << "\n";
+        cout << "  | " << left << setw(20) << "Mode" << " | " << setw(8) << "Count" << " |\n";
+        cout << "  " << SUB_BORDER << "\n";
+        for (int j = 0; j < groupDetails[i].modeCount; j++)
+            cout << "  | " << left << setw(20) << fit(groupDetails[i].modes[j].mode, 20) << " | " << right << setw(8) << groupDetails[i].modes[j].count << " |\n";
+        cout << "  " << SUB_BORDER << "\n";
     }
 
-    // insight
     string prefOfTop = "-"; int maxC = 0;
-    for (auto& [m, c] : groupMode[topGroup]) if (c > maxC) { maxC = c; prefOfTop = m; }
-    cout << "  >> Insight: " << topGroup
+    if (topGroupIdx >= 0) {
+        for (int j = 0; j < groupDetails[topGroupIdx].modeCount; j++)
+            if (groupDetails[topGroupIdx].modes[j].count > maxC) { 
+                maxC = groupDetails[topGroupIdx].modes[j].count; 
+                prefOfTop = groupDetails[topGroupIdx].modes[j].mode; 
+            }
+    }
+    cout << "\n  >> Insight: " << topGroup
          << " is the biggest emitting age group in City " << city
          << " with " << fixed << setprecision(2) << topGroupEm << " kg CO2/month.\n";
-    cout << "  >> Insight: Their preferred mode of transport is " << prefOfTop << ".\n";
+    cout << "  >> Insight: Their preferred transport mode is " << prefOfTop << ".\n";
 }
 
-// 5. Top N and Bottom N emitters by total emission
 void LinkedList::topBottomEmitters(int n) const {
     if (!head) { cout << "  (no data)\n"; return; }
     if (n < 1) n = 5;
     if (n > count) n = count;
 
-    // build a local pointer array and selection-sort descending
     Node** arr = new Node*[count];
     Node* cur = head;
     for (int i = 0; i < count; ++i, cur = cur->next) arr[i] = cur;
@@ -1091,53 +1005,45 @@ void LinkedList::topBottomEmitters(int n) const {
         if (hi != i) swap(arr[i], arr[hi]);
     }
 
-    // top N
-    cout << "\n  ===== TOP " << n << " HIGHEST EMITTERS =====\n";
-    cout << "\n  " << left
-         << setw(7)  << "Rank"
-         << setw(8)  << "ID"
-         << setw(5)  << "Age"
-         << setw(36) << "Age Group"
-         << setw(14) << "Mode"
-         << setw(16) << "Total Emis (kg)"
-         << "\n";
-    cout << "  " << string(86, '-') << "\n";
-    for (int i = 0; i < n; ++i) {
-        cout << "  " << left
-             << setw(7)  << ("#" + to_string(i + 1))
-             << setw(8)  << arr[i]->residentID
-             << setw(5)  << arr[i]->age
-             << setw(36) << arr[i]->ageGroup
-             << setw(14) << arr[i]->mode
-             << setw(16) << fixed << setprecision(2) << arr[i]->totalEmission << "\n";
-    }
-    cout << "  " << string(86, '-') << "\n";
+    auto printRankTable = [&](const string& title, int from, int to, bool asc) {
+        cout << "\n  " << title << "\n";
+        cout << RANK_BORDER << "\n";
+        cout << "| " << left
+             << setw(6)  << "Rank"  << " | "
+             << setw(6)  << "ID"    << " | "
+             << setw(5)  << "Age"   << " | "
+             << setw(35) << "Age Group" << " | "
+             << setw(12) << "Mode"  << " | "
+             << setw(15) << "Total Emis(kg)" << " |\n";
+        cout << RANK_BORDER << "\n";
+        if (asc) {
+            for (int i = from; i <= to; ++i) {
+                int rank = count - i;
+                cout << "| " << left  << setw(6)  << ("#" + to_string(rank))         << " | "
+                     << left  << setw(6)  << fit(arr[i]->residentID, 6)               << " | "
+                     << right << setw(5)  << arr[i]->age                               << " | "
+                     << left  << setw(35) << fit(arr[i]->ageGroup, 35)                 << " | "
+                     << left  << setw(12) << fit(arr[i]->mode, 12)                     << " | "
+                     << right << setw(15) << fixed << setprecision(2) << arr[i]->totalEmission << " |\n";
+            }
+        } else {
+            for (int i = from; i <= to; ++i) {
+                cout << "| " << left  << setw(6)  << ("#" + to_string(i + 1))         << " | "
+                     << left  << setw(6)  << fit(arr[i]->residentID, 6)               << " | "
+                     << right << setw(5)  << arr[i]->age                               << " | "
+                     << left  << setw(35) << fit(arr[i]->ageGroup, 35)                 << " | "
+                     << left  << setw(12) << fit(arr[i]->mode, 12)                     << " | "
+                     << right << setw(15) << fixed << setprecision(2) << arr[i]->totalEmission << " |\n";
+            }
+        }
+        cout << RANK_BORDER << "\n";
+    };
 
-    // bottom N (display lowest first)
-    cout << "\n  ===== BOTTOM " << n << " LOWEST EMITTERS =====\n";
-    cout << "\n  " << left
-         << setw(7)  << "Rank"
-         << setw(8)  << "ID"
-         << setw(5)  << "Age"
-         << setw(36) << "Age Group"
-         << setw(14) << "Mode"
-         << setw(16) << "Total Emis (kg)"
-         << "\n";
-    cout << "  " << string(86, '-') << "\n";
-    for (int i = count - 1; i >= count - n; --i) {
-        int rank = count - i;
-        cout << "  " << left
-             << setw(7)  << ("#" + to_string(rank))
-             << setw(8)  << arr[i]->residentID
-             << setw(5)  << arr[i]->age
-             << setw(36) << arr[i]->ageGroup
-             << setw(14) << arr[i]->mode
-             << setw(16) << fixed << setprecision(2) << arr[i]->totalEmission << "\n";
-    }
-    cout << "  " << string(86, '-') << "\n";
+    printRankTable("TOP " + to_string(n) + " HIGHEST EMITTERS", 0, n - 1, false);
+    printRankTable("BOTTOM " + to_string(n) + " LOWEST EMITTERS", count - n, count - 1, true);
 
     double gap = arr[0]->totalEmission - arr[count - 1]->totalEmission;
-    cout << "\n  >> Insight: The emission gap between the highest and lowest emitter is "
+    cout << "\n  >> Insight: Emission gap (highest - lowest) = "
          << fixed << setprecision(2) << gap << " kg CO2/month.\n";
     cout << "  >> Insight: Top emitter " << arr[0]->residentID << " uses "
          << arr[0]->mode << " (" << fixed << setprecision(2)
@@ -1146,97 +1052,49 @@ void LinkedList::topBottomEmitters(int n) const {
     delete[] arr;
 }
 
-// ==============================================================
-//  MULTI-CONDITION SEARCH METHODS (City A and B only)
-// ==============================================================
-
-// Search by age range AND mode of transport (both conditions must match)
+// ── multi-condition search ────────────────────────────────────────────────
 void LinkedList::multiConditionSearchAgeMode(int minAge, int maxAge, const string& mode) const {
+    cout << "\n  [Multi-Condition Search]  Age " << minAge << "-" << maxAge
+         << "  AND  Mode = \"" << mode << "\"\n";
     auto start = chrono::high_resolution_clock::now();
 
-    // normalise input mode to lowercase for comparison
     string modeLow = mode;
     for (char& c : modeLow) c = (char)tolower(c);
 
-    cout << "\n  [Multi-Condition Search] Age " << minAge << "-" << maxAge
-         << "  AND  Mode = \"" << mode << "\"\n";
-    cout << "\n  " << left
-         << setw(8)  << "ID"
-         << setw(6)  << "Age"
-         << setw(36) << "Age Group"
-         << setw(14) << "Mode"
-         << setw(12) << "Dist(km)"
-         << setw(16) << "Total Emis (kg)"
-         << "\n";
-    cout << "  " << string(92, '-') << "\n";
-
+    srchHeader();
     int found = 0;
     Node* cur = head;
     while (cur) {
-        string curModeLow = cur->mode;
-        for (char& c : curModeLow) c = (char)tolower(c);
-        if (cur->age >= minAge && cur->age <= maxAge && curModeLow == modeLow) {
-            cout << "  " << left
-                 << setw(8)  << cur->residentID
-                 << setw(6)  << cur->age
-                 << setw(36) << cur->ageGroup
-                 << setw(14) << cur->mode
-                 << setw(12) << fixed << setprecision(1) << cur->distance
-                 << setw(16) << fixed << setprecision(2) << cur->totalEmission << "\n";
-            ++found;
-        }
+        string curLow = cur->mode;
+        for (char& c : curLow) c = (char)tolower(c);
+        if (cur->age >= minAge && cur->age <= maxAge && curLow == modeLow)
+            { srchRow(cur); ++found; }
         cur = cur->next;
     }
-
-    auto end = chrono::high_resolution_clock::now();
-    double ms = chrono::duration<double, milli>(end - start).count();
-    cout << "  " << string(92, '-') << "\n";
-    cout << "  Found " << found << " residents  |  Time: "
-         << fixed << setprecision(4) << ms << " ms\n";
-    cout << "  Time Complexity: O(n)  |  Space: O(1)\n";
+    cout << SRCH_BORDER << "\n";
+    double us = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
+    printSearchStats("Multi-Cond: Age+Mode", us, "O(n)", "O(1)", found, count);
 }
 
-// Search by distance threshold AND mode of transport (both conditions must match)
 void LinkedList::multiConditionSearchDistMode(double minKm, const string& mode) const {
+    cout << "\n  [Multi-Condition Search]  Dist > " << minKm
+         << " km  AND  Mode = \"" << mode << "\"\n";
     auto start = chrono::high_resolution_clock::now();
 
     string modeLow = mode;
     for (char& c : modeLow) c = (char)tolower(c);
 
-    cout << "\n  [Multi-Condition Search] Daily Distance > " << minKm
-         << " km  AND  Mode = \"" << mode << "\"\n";
-    cout << "\n  " << left
-         << setw(8)  << "ID"
-         << setw(6)  << "Age"
-         << setw(36) << "Age Group"
-         << setw(14) << "Mode"
-         << setw(12) << "Dist(km)"
-         << setw(16) << "Total Emis (kg)"
-         << "\n";
-    cout << "  " << string(92, '-') << "\n";
-
+    srchHeader();
     int found = 0;
     Node* cur = head;
     while (cur) {
-        string curModeLow = cur->mode;
-        for (char& c : curModeLow) c = (char)tolower(c);
-        if (cur->distance > minKm && curModeLow == modeLow) {
-            cout << "  " << left
-                 << setw(8)  << cur->residentID
-                 << setw(6)  << cur->age
-                 << setw(36) << cur->ageGroup
-                 << setw(14) << cur->mode
-                 << setw(12) << fixed << setprecision(1) << cur->distance
-                 << setw(16) << fixed << setprecision(2) << cur->totalEmission << "\n";
-            ++found;
-        }
+        string curLow = cur->mode;
+        for (char& c : curLow) c = (char)tolower(c);
+        if (cur->distance > minKm && curLow == modeLow)
+            { srchRow(cur); ++found; }
         cur = cur->next;
     }
-
-    auto end = chrono::high_resolution_clock::now();
-    double ms = chrono::duration<double, milli>(end - start).count();
-    cout << "  " << string(92, '-') << "\n";
-    cout << "  Found " << found << " residents  |  Time: "
-         << fixed << setprecision(4) << ms << " ms\n";
-    cout << "  Time Complexity: O(n)  |  Space: O(1)\n";
+    cout << SRCH_BORDER << "\n";
+    double us = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
+    printSearchStats("Multi-Cond: Dist+Mode", us, "O(n)", "O(1)", found, count);
 }

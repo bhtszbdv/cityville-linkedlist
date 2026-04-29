@@ -9,33 +9,19 @@ private:
     int   count; // total nodes
     std::string sourceFilename;    // so we know where to save back
     std::string csvHeader;      // keep the original header line
-    double lastSortMs = 0.0;   // elapsed time from the last sort call
+    double lastSortUs = 0.0;   // elapsed time from the last sort call
 
 public:
        // constructor/destructor
     LinkedList();
     ~LinkedList();
 
-        // append to end (mainly used when loading csv)
-    void insert(const std::string& id, int age, const std::string& mode,
-                double distance, double emFactor, int days,
-                const std::string& ageGroup, double totalEmission);
-       // add to front of list
-    void insertAtBeginning(const std::string& id, int age, const std::string& mode,
-                           double distance, double emFactor, int days,
-                           const std::string& ageGroup, double totalEmission);
-                          // insert at a given position (1 = head)
-    void insertAtPosition(int pos, const std::string& id, int age, const std::string& mode,
-                          double distance, double emFactor, int days,
-                          const std::string& ageGroup, double totalEmission);
-            // delete by resident id
-    bool deleteResident(const std::string& id);
        // reverse the whole list
     void reverse();
 
     void display() const;
     int    size()        const { return count; }
-    double sortTime()    const { return lastSortMs; }  // ms from last sort
+    double sortTime()    const { return lastSortUs; }  // microseconds from last sort
     void clear();
 
      // load from csv file

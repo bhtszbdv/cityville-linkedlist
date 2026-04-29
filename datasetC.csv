@@ -2,7 +2,6 @@ ResidentID,Age,ModeOfTransport,DailyDistance,CarbonEmissionFactor, AverageDayPer
 C019,22,Walking,2,0,23,University Students / Young Adults,0.00
 C050,26,Walking,2.00,0.00,22,Working Adults (Early Career),0.00
 C080,24,Walking,2.00,0.00,22,University Students / Young Adults,0.00
-C300,30,Bicycle,3.00,4.00,5,Working Adults (Early Career),60.00
 C011,27,Walking,3.00,0.00,20,Working Adults (Early Career),0.00
 C035,49,Walking,3.00,0.00,20,Working Adults (Late Career),0.00
 C058,50,Walking,3.00,0.00,21,Working Adults (Late Career),0.00
@@ -10,6 +9,7 @@ C065,51,Walking,3.00,0.00,20,Working Adults (Late Career),0.00
 C088,52,Walking,3.00,0.00,21,Working Adults (Late Career),0.00
 C104,27,Walking,3.00,0.00,23,Working Adults (Early Career),0.00
 C110,52,Walking,3.00,0.00,20,Working Adults (Late Career),0.00
+C300,30,Bicycle,3.00,4.00,5,Working Adults (Early Career),60.00
 C005,52,Walking,4.00,0.00,21,Working Adults (Late Career),0.00
 C028,29,Walking,4.00,0.00,21,Working Adults (Early Career),0.00
 C043,29,Walking,4.00,0.00,23,Working Adults (Early Career),0.00
