@@ -451,24 +451,40 @@ void sortMenuAB(LinkedList& city) {
     mc_printSortStats(algoName + " by " + fieldName, city.sortTime(), tc, sc, city.size());
 }
 
-// sort menu for city C - bubble sort only
+// sort menu for city C
 void sortMenu(LinkedList& city) {
+    cout << "\n  Select Algorithm:\n";
+    cout << "  [1] Bubble Sort\n";
+    cout << "  [2] Insertion Sort\n";
+    cout << "  [0] Back\n";
+    int algo = getValidIntInput("  Your choice: ");
+    if (algo == 0) { cout << "  Returning to city menu.\n"; return; }
+    if (algo < 1 || algo > 2) { cout << "  Invalid choice.\n"; return; }
+
     cout << "\n  Sort by:\n";
     cout << "  [1] Age\n";
     cout << "  [2] Daily Distance\n";
     cout << "  [3] Total Carbon Emission\n";
-    int choice = getValidIntInput("  Enter choice: ");
+    cout << "  [0] Back\n";
+    int field = getValidIntInput("  Your choice: ");
+    if (field == 0) { cout << "  Returning to city menu.\n"; return; }
 
-    string fieldName;
-    switch (choice) {
-        case 1: city.sortByAge();      fieldName = "Age";            break;
-        case 2: city.sortByDistance(); fieldName = "Daily Distance"; break;
-        case 3: city.sortByEmission(); fieldName = "Total Emission"; break;
-        default: cout << "  Invalid choice.\n"; return;
+    string algoName, fieldName, tc, sc;
+    if (algo == 1) {
+        algoName = "Bubble Sort"; tc = "O(n^2)"; sc = "O(1)";
+        if      (field == 1) { city.sortByAge();      fieldName = "Age"; }
+        else if (field == 2) { city.sortByDistance(); fieldName = "Daily Distance"; }
+        else if (field == 3) { city.sortByEmission(); fieldName = "Total Carbon Emission"; }
+        else { cout << "  Invalid field.\n"; return; }
+    } else {
+        algoName = "Insertion Sort"; tc = "O(n^2) worst / O(n) best"; sc = "O(1)";
+        if      (field == 1) { city.insertionSortByAge();      fieldName = "Age"; }
+        else if (field == 2) { city.insertionSortByDistance(); fieldName = "Daily Distance"; }
+        else if (field == 3) { city.insertionSortByEmission(); fieldName = "Total Carbon Emission"; }
+        else { cout << "  Invalid field.\n"; return; }
     }
     city.display();
-    mc_printSortStats("Bubble Sort by " + fieldName, city.sortTime(),
-                      "O(n^2)", "O(1)", city.size());
+    mc_printSortStats(algoName + " by " + fieldName, city.sortTime(), tc, sc, city.size());
 }
 
 // search menu for city A and B

@@ -1,4 +1,4 @@
-  //all the linked list logic is in here
+//all the linked list logic is in here
 #include "city_linkedlist.hpp"
 #include <iostream>
 #include <fstream>
@@ -568,7 +568,8 @@ void LinkedList::carbonAnalysis() const {
         cur = cur->next;
     }
 
-    cout << "\n  ===== CARBON EMISSION ANALYSIS =====\n";
+    char city = (!head->residentID.empty()) ? (char)toupper(head->residentID[0]) : '?';
+    cout << "\n  ===== CARBON EMISSION ANALYSIS - CITY " << city << " =====\n";
     cout << "  Residents: " << count
          << "   |   Total: " << fixed << setprecision(2) << totalEmission << " kg CO2/month"
          << "   |   Avg: " << (count ? totalEmission / count : 0.0) << " kg CO2/month\n\n";

@@ -1,123 +1,123 @@
 ResidentID,Age,ModeOfTransport,DailyDistance,CarbonEmissionFactor, AverageDayPerMonth, AgeGroup, TotalMonthlyEmission
-C001,34,Car,18,0.23,22,Working Adults (Early Career),91.08
-C002,21,Bicycle,6.00,0.00,24,University Students / Young Adults,0.00
-C003,45,Bus,15.00,0.06,20,Working Adults (Early Career),18.00
-C004,29,Carpool,12.00,0.15,23,Working Adults (Early Career),41.40
-C005,52,Walking,4.00,0.00,21,Working Adults (Late Career),0.00
-C006,38,Car,20.00,0.22,25,Working Adults (Early Career),110.00
-C007,26,Bus,14.00,0.05,19,Working Adults (Early Career),13.30
-C008,19,Bicycle,5.00,0.00,26,University Students / Young Adults,0.00
-C009,41,Carpool,16.00,0.17,22,Working Adults (Early Career),59.84
-C010,33,Car,22.00,0.24,24,Working Adults (Early Career),126.72
-C011,27,Walking,3.00,0.00,20,Working Adults (Early Career),0.00
-C012,48,Bus,18.00,0.07,21,Working Adults (Late Career),26.46
-C013,36,Car,19.00,0.21,23,Working Adults (Early Career),91.77
-C014,23,School Bus,11.00,0.05,22,University Students / Young Adults,12.10
-C015,39,Carpool,13.00,0.16,18,Working Adults (Early Career),37.44
-C016,28,Bicycle,7.00,0.00,24,Working Adults (Early Career),0.00
-C017,31,Car,17.00,0.23,25,Working Adults (Early Career),97.75
-C018,44,Bus,16.00,0.06,20,Working Adults (Early Career),19.20
-C019,22,Walking,2.00,0.00,23,University Students / Young Adults,0.00
-C020,35,Car,21.00,0.22,22,Working Adults (Early Career),101.64
-C021,40,Carpool,15.00,0.14,24,Working Adults (Early Career),50.40
-C022,30,Bus,12.00,0.05,19,Working Adults (Early Career),11.40
-C023,50,Car,23.00,0.25,21,Working Adults (Late Career),120.75
-C024,24,Bicycle,8.00,0.00,26,University Students / Young Adults,0.00
-C025,37,Car,18.00,0.21,20,Working Adults (Early Career),75.60
-C026,42,School Bus,14.00,0.06,22,Working Adults (Early Career),18.48
-C027,33,Carpool,17.00,0.18,23,Working Adults (Early Career),70.38
-C028,29,Walking,4.00,0.00,21,Working Adults (Early Career),0.00
-C029,55,Bus,19.00,0.07,24,Working Adults (Late Career),31.92
-C030,46,Car,20.00,0.24,22,Working Adults (Late Career),105.60
-C031,27,Car,16.00,0.22,23,Working Adults (Early Career),80.96
-C032,43,Bus,14.00,0.05,21,Working Adults (Early Career),14.70
-C033,22,Bicycle,7.00,0.00,25,University Students / Young Adults,0.00
-C034,36,Carpool,18.00,0.16,22,Working Adults (Early Career),63.36
-C035,49,Walking,3.00,0.00,20,Working Adults (Late Career),0.00
-C036,31,Car,19.00,0.24,24,Working Adults (Early Career),109.44
-C037,28,School Bus,12.00,0.06,23,Working Adults (Early Career),16.56
-C038,54,Car,21.00,0.23,19,Working Adults (Late Career),91.77
-C039,25,Bus,15.00,0.07,22,University Students / Young Adults,23.10
-C040,38,Carpool,17.00,0.15,26,Working Adults (Early Career),66.30
-C041,33,Bicycle,6.00,0.00,24,Working Adults (Early Career),0.00
-C042,47,Car,20.00,0.25,21,Working Adults (Late Career),105.00
-C043,29,Walking,4.00,0.00,23,Working Adults (Early Career),0.00
-C044,41,Bus,18.00,0.06,20,Working Adults (Early Career),21.60
-C045,52,Car,22.00,0.24,22,Working Adults (Late Career),116.16
-C046,24,Carpool,13.00,0.14,25,University Students / Young Adults,45.50
-C047,35,Bicycle,8.00,0.00,26,Working Adults (Early Career),0.00
-C048,44,Car,19.00,0.22,21,Working Adults (Early Career),87.78
-C049,30,Bus,16.00,0.05,24,Working Adults (Early Career),19.20
-C050,26,Walking,2.00,0.00,22,Working Adults (Early Career),0.00
-C051,39,Car,18.00,0.23,23,Working Adults (Early Career),95.22
-C052,58,Carpool,20.00,0.17,19,Working Adults (Late Career),64.60
-C053,32,School Bus,11.00,0.05,24,Working Adults (Early Career),13.20
-C054,21,Bicycle,5.00,0.00,26,University Students / Young Adults,0.00
-C055,45,Car,23.00,0.24,20,Working Adults (Early Career),110.40
-C056,37,Bus,14.00,0.06,22,Working Adults (Early Career),18.48
-C057,28,Carpool,15.00,0.16,23,Working Adults (Early Career),55.20
-C058,50,Walking,3.00,0.00,21,Working Adults (Late Career),0.00
-C059,34,Car,17.00,0.22,25,Working Adults (Early Career),93.50
-C060,42,Bus,19.00,0.07,20,Working Adults (Early Career),26.60
-C061,29,Car,18.00,0.23,22,Working Adults (Early Career),91.08
-C062,46,Bus,15.00,0.06,21,Working Adults (Late Career),18.90
-C063,23,Bicycle,6.00,0.00,25,University Students / Young Adults,0.00
-C064,37,Carpool,17.00,0.15,24,Working Adults (Early Career),61.20
-C065,51,Walking,3.00,0.00,20,Working Adults (Late Career),0.00
-C066,34,Car,20.00,0.24,23,Working Adults (Early Career),110.40
-C067,28,School Bus,12.00,0.05,22,Working Adults (Early Career),13.20
-C068,43,Car,19.00,0.22,26,Working Adults (Early Career),108.68
-C069,26,Bus,14.00,0.07,19,Working Adults (Early Career),18.62
-C070,39,Carpool,16.00,0.16,21,Working Adults (Early Career),53.76
-C071,31,Bicycle,7.00,0.00,24,Working Adults (Early Career),0.00
-C072,48,Car,22.00,0.25,20,Working Adults (Late Career),110.00
-C073,27,Walking,4.00,0.00,23,Working Adults (Early Career),0.00
-C074,44,Bus,18.00,0.05,22,Working Adults (Early Career),19.80
-C075,53,Car,21.00,0.24,24,Working Adults (Late Career),120.96
-C076,25,Carpool,13.00,0.14,26,University Students / Young Adults,47.32
-C077,36,Bicycle,8.00,0.00,25,Working Adults (Early Career),0.00
-C078,41,Car,19.00,0.23,21,Working Adults (Early Career),91.77
-C079,30,Bus,16.00,0.06,23,Working Adults (Early Career),22.08
+C019,22,Walking,2,0,23,University Students / Young Adults,0.00
 C080,24,Walking,2.00,0.00,22,University Students / Young Adults,0.00
-C081,38,Car,17.00,0.21,24,Working Adults (Early Career),85.68
-C082,55,Carpool,20.00,0.17,20,Working Adults (Late Career),68.00
-C083,33,School Bus,11.00,0.06,23,Working Adults (Early Career),15.18
-C084,22,Bicycle,5.00,0.00,26,University Students / Young Adults,0.00
-C085,47,Car,23.00,0.25,19,Working Adults (Late Career),109.25
-C086,35,Bus,14.00,0.05,22,Working Adults (Early Career),15.40
-C087,29,Carpool,15.00,0.18,24,Working Adults (Early Career),64.80
-C088,52,Walking,3.00,0.00,21,Working Adults (Late Career),0.00
-C089,40,Car,18.00,0.22,25,Working Adults (Early Career),99.00
-C090,45,Bus,19.00,0.07,20,Working Adults (Early Career),26.60
-C091,28,Car,16.00,0.23,23,Working Adults (Early Career),84.64
-C092,49,Bus,17.00,0.06,22,Working Adults (Late Career),22.44
-C093,21,Bicycle,6.00,0.00,24,University Students / Young Adults,0.00
-C094,32,Carpool,14.00,0.15,25,Working Adults (Early Career),52.50
-C095,54,Walking,4.00,0.00,19,Working Adults (Late Career),0.00
-C096,37,Car,20.00,0.24,21,Working Adults (Early Career),100.80
-C097,26,School Bus,10.00,0.05,23,Working Adults (Early Career),11.50
-C098,42,Car,19.00,0.22,22,Working Adults (Early Career),91.96
-C099,30,Bus,15.00,0.07,24,Working Adults (Early Career),25.20
-C100,34,Carpool,16.00,0.16,20,Working Adults (Early Career),51.20
-C101,23,Bicycle,7.00,0.00,26,University Students / Young Adults,0.00
-C102,50,Car,21.00,0.25,21,Working Adults (Late Career),110.25
-C103,39,Bus,18.00,0.06,22,Working Adults (Early Career),23.76
+C050,26,Walking,2.00,0.00,22,Working Adults (Early Career),0.00
+C011,27,Walking,3.00,0.00,20,Working Adults (Early Career),0.00
 C104,27,Walking,3.00,0.00,23,Working Adults (Early Career),0.00
-C105,44,Car,22.00,0.24,20,Working Adults (Early Career),105.60
-C106,31,Car,18.00,0.22,24,Working Adults (Early Career),95.04
-C107,47,Bus,16.00,0.06,21,Working Adults (Late Career),20.16
-C108,24,Bicycle,6.00,0.00,25,University Students / Young Adults,0.00
-C109,36,Carpool,14.00,0.15,23,Working Adults (Early Career),48.30
+C035,49,Walking,3.00,0.00,20,Working Adults (Late Career),0.00
+C058,50,Walking,3.00,0.00,21,Working Adults (Late Career),0.00
+C065,51,Walking,3.00,0.00,20,Working Adults (Late Career),0.00
+C088,52,Walking,3.00,0.00,21,Working Adults (Late Career),0.00
 C110,52,Walking,3.00,0.00,20,Working Adults (Late Career),0.00
-C111,29,Car,20.00,0.24,22,Working Adults (Early Career),105.60
-C112,41,School Bus,11.00,0.05,24,Working Adults (Early Career),13.20
-C113,33,Car,19.00,0.23,21,Working Adults (Early Career),91.77
-C114,27,Bus,15.00,0.07,22,Working Adults (Early Career),23.10
-C115,45,Carpool,17.00,0.16,25,Working Adults (Early Career),68.00
-C116,22,Bicycle,5.00,0.00,26,University Students / Young Adults,0.00
-C117,38,Car,21.00,0.25,19,Working Adults (Early Career),99.75
+C073,27,Walking,4.00,0.00,23,Working Adults (Early Career),0.00
+C028,29,Walking,4.00,0.00,21,Working Adults (Early Career),0.00
+C043,29,Walking,4.00,0.00,23,Working Adults (Early Career),0.00
 C118,50,Walking,4.00,0.00,23,Working Adults (Late Career),0.00
-C119,34,Bus,18.00,0.06,20,Working Adults (Early Career),21.60
-C120,28,Carpool,16.00,0.17,24,Working Adults (Early Career),65.28
-C121,43,Car,22.00,0.24,22,Working Adults (Early Career),116.16
+C005,52,Walking,4.00,0.00,21,Working Adults (Late Career),0.00
+C095,54,Walking,4.00,0.00,19,Working Adults (Late Career),0.00
+C008,19,Bicycle,5.00,0.00,26,University Students / Young Adults,0.00
+C054,21,Bicycle,5.00,0.00,26,University Students / Young Adults,0.00
+C084,22,Bicycle,5.00,0.00,26,University Students / Young Adults,0.00
+C116,22,Bicycle,5.00,0.00,26,University Students / Young Adults,0.00
+C002,21,Bicycle,6.00,0.00,24,University Students / Young Adults,0.00
+C093,21,Bicycle,6.00,0.00,24,University Students / Young Adults,0.00
+C063,23,Bicycle,6.00,0.00,25,University Students / Young Adults,0.00
+C108,24,Bicycle,6.00,0.00,25,University Students / Young Adults,0.00
+C041,33,Bicycle,6.00,0.00,24,Working Adults (Early Career),0.00
+C033,22,Bicycle,7.00,0.00,25,University Students / Young Adults,0.00
+C101,23,Bicycle,7.00,0.00,26,University Students / Young Adults,0.00
 C122,26,Bicycle,7.00,0.00,25,Working Adults (Early Career),0.00
+C016,28,Bicycle,7.00,0.00,24,Working Adults (Early Career),0.00
+C071,31,Bicycle,7.00,0.00,24,Working Adults (Early Career),0.00
+C024,24,Bicycle,8.00,0.00,26,University Students / Young Adults,0.00
+C047,35,Bicycle,8.00,0.00,26,Working Adults (Early Career),0.00
+C077,36,Bicycle,8.00,0.00,25,Working Adults (Early Career),0.00
+C022,30,Bus,12.00,0.05,19,Working Adults (Early Career),11.40
+C097,26,School Bus,10.00,0.05,23,Working Adults (Early Career),11.50
+C014,23,School Bus,11.00,0.05,22,University Students / Young Adults,12.10
+C053,32,School Bus,11.00,0.05,24,Working Adults (Early Career),13.20
+C112,41,School Bus,11.00,0.05,24,Working Adults (Early Career),13.20
+C067,28,School Bus,12.00,0.05,22,Working Adults (Early Career),13.20
+C007,26,Bus,14.00,0.05,19,Working Adults (Early Career),13.30
+C032,43,Bus,14.00,0.05,21,Working Adults (Early Career),14.70
+C083,33,School Bus,11.00,0.06,23,Working Adults (Early Career),15.18
+C086,35,Bus,14.00,0.05,22,Working Adults (Early Career),15.40
+C037,28,School Bus,12.00,0.06,23,Working Adults (Early Career),16.56
+C003,45,Bus,15.00,0.06,20,Working Adults (Early Career),18.00
+C056,37,Bus,14.00,0.06,22,Working Adults (Early Career),18.48
+C026,42,School Bus,14.00,0.06,22,Working Adults (Early Career),18.48
+C069,26,Bus,14.00,0.07,19,Working Adults (Early Career),18.62
+C062,46,Bus,15.00,0.06,21,Working Adults (Late Career),18.90
+C049,30,Bus,16.00,0.05,24,Working Adults (Early Career),19.20
+C018,44,Bus,16.00,0.06,20,Working Adults (Early Career),19.20
+C074,44,Bus,18.00,0.05,22,Working Adults (Early Career),19.80
+C107,47,Bus,16.00,0.06,21,Working Adults (Late Career),20.16
+C119,34,Bus,18.00,0.06,20,Working Adults (Early Career),21.60
+C044,41,Bus,18.00,0.06,20,Working Adults (Early Career),21.60
+C079,30,Bus,16.00,0.06,23,Working Adults (Early Career),22.08
+C092,49,Bus,17.00,0.06,22,Working Adults (Late Career),22.44
+C039,25,Bus,15.00,0.07,22,University Students / Young Adults,23.10
+C114,27,Bus,15.00,0.07,22,Working Adults (Early Career),23.10
+C103,39,Bus,18.00,0.06,22,Working Adults (Early Career),23.76
+C099,30,Bus,15.00,0.07,24,Working Adults (Early Career),25.20
+C012,48,Bus,18.00,0.07,21,Working Adults (Late Career),26.46
+C060,42,Bus,19.00,0.07,20,Working Adults (Early Career),26.60
+C090,45,Bus,19.00,0.07,20,Working Adults (Early Career),26.60
+C029,55,Bus,19.00,0.07,24,Working Adults (Late Career),31.92
+C015,39,Carpool,13.00,0.16,18,Working Adults (Early Career),37.44
+C004,29,Carpool,12.00,0.15,23,Working Adults (Early Career),41.40
+C046,24,Carpool,13.00,0.14,25,University Students / Young Adults,45.50
+C076,25,Carpool,13.00,0.14,26,University Students / Young Adults,47.32
+C109,36,Carpool,14.00,0.15,23,Working Adults (Early Career),48.30
+C021,40,Carpool,15.00,0.14,24,Working Adults (Early Career),50.40
+C100,34,Carpool,16.00,0.16,20,Working Adults (Early Career),51.20
+C094,32,Carpool,14.00,0.15,25,Working Adults (Early Career),52.50
+C070,39,Carpool,16.00,0.16,21,Working Adults (Early Career),53.76
+C057,28,Carpool,15.00,0.16,23,Working Adults (Early Career),55.20
+C009,41,Carpool,16.00,0.17,22,Working Adults (Early Career),59.84
+C064,37,Carpool,17.00,0.15,24,Working Adults (Early Career),61.20
+C034,36,Carpool,18.00,0.16,22,Working Adults (Early Career),63.36
+C052,58,Carpool,20.00,0.17,19,Working Adults (Late Career),64.60
+C087,29,Carpool,15.00,0.18,24,Working Adults (Early Career),64.80
+C120,28,Carpool,16.00,0.17,24,Working Adults (Early Career),65.28
+C040,38,Carpool,17.00,0.15,26,Working Adults (Early Career),66.30
+C115,45,Carpool,17.00,0.16,25,Working Adults (Early Career),68.00
+C082,55,Carpool,20.00,0.17,20,Working Adults (Late Career),68.00
+C027,33,Carpool,17.00,0.18,23,Working Adults (Early Career),70.38
+C025,37,Car,18.00,0.21,20,Working Adults (Early Career),75.60
+C031,27,Car,16.00,0.22,23,Working Adults (Early Career),80.96
+C091,28,Car,16.00,0.23,23,Working Adults (Early Career),84.64
+C081,38,Car,17.00,0.21,24,Working Adults (Early Career),85.68
+C048,44,Car,19.00,0.22,21,Working Adults (Early Career),87.78
+C061,29,Car,18.00,0.23,22,Working Adults (Early Career),91.08
+C001,34,Car,18.00,0.23,22,Working Adults (Early Career),91.08
+C113,33,Car,19.00,0.23,21,Working Adults (Early Career),91.77
+C013,36,Car,19.00,0.21,23,Working Adults (Early Career),91.77
+C078,41,Car,19.00,0.23,21,Working Adults (Early Career),91.77
+C038,54,Car,21.00,0.23,19,Working Adults (Late Career),91.77
+C098,42,Car,19.00,0.22,22,Working Adults (Early Career),91.96
+C059,34,Car,17.00,0.22,25,Working Adults (Early Career),93.50
+C106,31,Car,18.00,0.22,24,Working Adults (Early Career),95.04
+C051,39,Car,18.00,0.23,23,Working Adults (Early Career),95.22
+C017,31,Car,17.00,0.23,25,Working Adults (Early Career),97.75
+C089,40,Car,18.00,0.22,25,Working Adults (Early Career),99.00
+C117,38,Car,21.00,0.25,19,Working Adults (Early Career),99.75
+C096,37,Car,20.00,0.24,21,Working Adults (Early Career),100.80
+C020,35,Car,21.00,0.22,22,Working Adults (Early Career),101.64
+C042,47,Car,20.00,0.25,21,Working Adults (Late Career),105.00
+C111,29,Car,20.00,0.24,22,Working Adults (Early Career),105.60
+C030,46,Car,20.00,0.24,22,Working Adults (Late Career),105.60
+C105,44,Car,22.00,0.24,20,Working Adults (Early Career),105.60
+C068,43,Car,19.00,0.22,26,Working Adults (Early Career),108.68
+C085,47,Car,23.00,0.25,19,Working Adults (Late Career),109.25
+C036,31,Car,19.00,0.24,24,Working Adults (Early Career),109.44
+C006,38,Car,20.00,0.22,25,Working Adults (Early Career),110.00
+C072,48,Car,22.00,0.25,20,Working Adults (Late Career),110.00
+C102,50,Car,21.00,0.25,21,Working Adults (Late Career),110.25
+C066,34,Car,20.00,0.24,23,Working Adults (Early Career),110.40
+C055,45,Car,23.00,0.24,20,Working Adults (Early Career),110.40
+C121,43,Car,22.00,0.24,22,Working Adults (Early Career),116.16
+C045,52,Car,22.00,0.24,22,Working Adults (Late Career),116.16
+C023,50,Car,23.00,0.25,21,Working Adults (Late Career),120.75
+C075,53,Car,21.00,0.24,24,Working Adults (Late Career),120.96
+C010,33,Car,22.00,0.24,24,Working Adults (Early Career),126.72
