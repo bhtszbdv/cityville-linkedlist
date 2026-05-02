@@ -1,179 +1,179 @@
 ResidentID,Age,ModeOfTransport,DailyDistance,CarbonEmissionFactor, AverageDayPerMonth, AgeGroup, TotalMonthlyEmission
-B001,16,Bicycle,5,0,21,Children & Teenagers,0.00
 B002,20,Walking,2.00,0.00,20,University Students / Young Adults,0.00
-B003,22,School Bus,10.00,0.05,23,University Students / Young Adults,11.50
-B004,19,Carpool,12.00,0.15,21,University Students / Young Adults,37.80
-B005,24,Bicycle,6.00,0.00,23,University Students / Young Adults,0.00
-B006,18,Walking,3.00,0.00,22,University Students / Young Adults,0.00
-B007,23,School Bus,11.00,0.06,24,University Students / Young Adults,15.84
-B008,21,Carpool,8.00,0.16,25,University Students / Young Adults,32.00
-B009,17,Bicycle,4.00,0.00,21,Children & Teenagers,0.00
 B010,15,Walking,2.00,0.00,22,Children & Teenagers,0.00
-B011,24,School Bus,9.00,0.05,23,University Students / Young Adults,10.35
-B012,19,Carpool,10.00,0.14,20,University Students / Young Adults,28.00
-B013,22,Bicycle,7.00,0.00,24,University Students / Young Adults,0.00
-B014,20,Walking,3.00,0.00,22,University Students / Young Adults,0.00
-B015,18,School Bus,12.00,0.07,23,University Students / Young Adults,19.32
-B016,16,Carpool,9.00,0.13,25,Children & Teenagers,29.25
-B017,21,Bicycle,6.00,0.00,22,University Students / Young Adults,0.00
-B018,23,Walking,3.00,0.00,24,University Students / Young Adults,0.00
-B019,19,School Bus,10.00,0.06,23,University Students / Young Adults,13.80
-B020,17,Carpool,11.00,0.15,21,Children & Teenagers,34.65
-B021,18,Bicycle,5.00,0.00,22,University Students / Young Adults,0.00
-B022,24,Walking,3.00,0.00,23,University Students / Young Adults,0.00
-B023,20,School Bus,9.00,0.05,21,University Students / Young Adults,9.45
-B024,16,Carpool,10.00,0.16,24,Children & Teenagers,38.40
-B025,22,Bicycle,6.00,0.00,25,University Students / Young Adults,0.00
 B026,19,Walking,2.00,0.00,22,University Students / Young Adults,0.00
-B027,23,School Bus,11.00,0.06,24,University Students / Young Adults,15.84
-B028,21,Carpool,12.00,0.15,23,University Students / Young Adults,41.40
-B029,17,Bicycle,4.00,0.00,22,Children & Teenagers,0.00
-B030,15,Walking,3.00,0.00,21,Children & Teenagers,0.00
-B031,20,School Bus,10.00,0.07,23,University Students / Young Adults,16.10
-B032,18,Carpool,11.00,0.14,25,University Students / Young Adults,38.50
-B033,24,Bicycle,7.00,0.00,24,University Students / Young Adults,0.00
 B034,19,Walking,2.00,0.00,22,University Students / Young Adults,0.00
-B035,23,School Bus,12.00,0.05,23,University Students / Young Adults,13.80
-B036,21,Carpool,10.00,0.16,24,University Students / Young Adults,38.40
-B037,17,Bicycle,6.00,0.00,21,Children & Teenagers,0.00
-B038,16,Walking,3.00,0.00,22,Children & Teenagers,0.00
-B039,22,School Bus,9.00,0.06,24,University Students / Young Adults,12.96
-B040,20,Carpool,11.00,0.15,23,University Students / Young Adults,37.95
-B041,18,Bicycle,5.00,0.00,22,University Students / Young Adults,0.00
-B042,24,Walking,3.00,0.00,25,University Students / Young Adults,0.00
-B043,19,School Bus,10.00,0.05,21,University Students / Young Adults,10.50
-B044,23,Carpool,12.00,0.16,24,University Students / Young Adults,46.08
-B045,21,Bicycle,6.00,0.00,23,University Students / Young Adults,0.00
 B046,16,Walking,2.00,0.00,22,Children & Teenagers,0.00
-B047,22,School Bus,11.00,0.07,24,University Students / Young Adults,18.48
-B048,20,Carpool,10.00,0.14,23,University Students / Young Adults,32.20
-B049,17,Bicycle,4.00,0.00,22,Children & Teenagers,0.00
-B050,15,Walking,3.00,0.00,21,Children & Teenagers,0.00
-B051,23,School Bus,12.00,0.05,25,University Students / Young Adults,15.00
-B052,21,Carpool,11.00,0.16,24,University Students / Young Adults,42.24
-B053,18,Bicycle,5.00,0.00,22,University Students / Young Adults,0.00
-B054,24,Walking,3.00,0.00,23,University Students / Young Adults,0.00
-B055,19,School Bus,10.00,0.06,24,University Students / Young Adults,14.40
-B056,22,Carpool,12.00,0.15,21,University Students / Young Adults,37.80
-B057,20,Bicycle,6.00,0.00,22,University Students / Young Adults,0.00
 B058,16,Walking,2.00,0.00,23,Children & Teenagers,0.00
-B059,23,School Bus,11.00,0.05,24,University Students / Young Adults,13.20
-B060,21,Carpool,10.00,0.16,22,University Students / Young Adults,35.20
-B061,12,Bicycle,4.00,0.00,22,Children & Teenagers,0.00
-B062,19,Carpool,10.00,0.15,23,University Students / Young Adults,34.50
 B063,6,Walking,2.00,0.00,20,Children & Teenagers,0.00
-B064,21,School Bus,9.00,0.05,24,University Students / Young Adults,10.80
-B065,17,Bicycle,5.00,0.00,23,Children & Teenagers,0.00
-B066,15,Walking,3.00,0.00,21,Children & Teenagers,0.00
-B067,24,School Bus,11.00,0.06,25,University Students / Young Adults,16.50
-B068,25,Carpool,12.00,0.16,22,University Students / Young Adults,42.24
-B069,8,Bicycle,3.00,0.00,24,Children & Teenagers,0.00
 B070,13,Walking,2.00,0.00,23,Children & Teenagers,0.00
-B071,22,School Bus,10.00,0.07,21,University Students / Young Adults,14.70
-B072,20,Carpool,11.00,0.14,22,University Students / Young Adults,33.88
-B073,14,Bicycle,6.00,0.00,24,Children & Teenagers,0.00
-B074,18,Walking,3.00,0.00,23,University Students / Young Adults,0.00
-B075,6,School Bus,9.00,0.05,25,Children & Teenagers,11.25
-B076,19,Carpool,10.00,0.15,22,University Students / Young Adults,33.00
-B077,16,Bicycle,5.00,0.00,21,Children & Teenagers,0.00
 B078,23,Walking,2.00,0.00,24,University Students / Young Adults,0.00
-B079,7,School Bus,11.00,0.06,23,Children & Teenagers,15.18
-B080,12,Carpool,12.00,0.16,22,Children & Teenagers,42.24
-B081,20,Bicycle,4.00,0.00,24,University Students / Young Adults,0.00
-B082,25,Walking,3.00,0.00,21,University Students / Young Adults,0.00
-B083,9,School Bus,10.00,0.05,23,Children & Teenagers,11.50
-B084,18,Carpool,11.00,0.15,25,University Students / Young Adults,41.25
-B085,13,Bicycle,5.00,0.00,22,Children & Teenagers,0.00
 B086,17,Walking,2.00,0.00,24,Children & Teenagers,0.00
-B087,24,School Bus,12.00,0.06,23,University Students / Young Adults,16.56
-B088,21,Carpool,10.00,0.16,22,University Students / Young Adults,35.20
-B089,8,Bicycle,3.00,0.00,21,Children & Teenagers,0.00
 B090,14,Walking,2.00,0.00,23,Children & Teenagers,0.00
-B091,19,School Bus,11.00,0.07,24,University Students / Young Adults,18.48
-B092,25,Carpool,12.00,0.14,22,University Students / Young Adults,36.96
-B093,16,Bicycle,5.00,0.00,25,Children & Teenagers,0.00
-B094,20,Walking,3.00,0.00,22,University Students / Young Adults,0.00
-B095,7,School Bus,10.00,0.05,23,Children & Teenagers,11.50
-B096,18,Carpool,11.00,0.15,21,University Students / Young Adults,34.65
-B097,12,Bicycle,4.00,0.00,24,Children & Teenagers,0.00
-B098,23,Walking,3.00,0.00,22,University Students / Young Adults,0.00
-B099,6,School Bus,9.00,0.06,25,Children & Teenagers,13.50
-B100,15,Carpool,12.00,0.16,23,Children & Teenagers,44.16
-B101,14,Bicycle,5.00,0.00,22,Children & Teenagers,0.00
-B102,20,Carpool,10.00,0.15,23,University Students / Young Adults,34.50
 B103,6,Walking,2.00,0.00,20,Children & Teenagers,0.00
-B104,21,School Bus,9.00,0.05,24,University Students / Young Adults,10.80
-B105,17,Bicycle,6.00,0.00,23,Children & Teenagers,0.00
-B106,15,Walking,3.00,0.00,21,Children & Teenagers,0.00
-B107,24,School Bus,11.00,0.06,25,University Students / Young Adults,16.50
-B108,25,Carpool,12.00,0.16,22,University Students / Young Adults,42.24
-B109,8,Bicycle,4.00,0.00,24,Children & Teenagers,0.00
 B110,13,Walking,2.00,0.00,23,Children & Teenagers,0.00
-B111,22,School Bus,10.00,0.07,21,University Students / Young Adults,14.70
-B112,20,Carpool,11.00,0.14,22,University Students / Young Adults,33.88
-B113,14,Bicycle,5.00,0.00,24,Children & Teenagers,0.00
-B114,18,Walking,3.00,0.00,23,University Students / Young Adults,0.00
-B115,6,School Bus,9.00,0.05,25,Children & Teenagers,11.25
-B116,19,Carpool,10.00,0.15,22,University Students / Young Adults,33.00
-B117,16,Bicycle,5.00,0.00,21,Children & Teenagers,0.00
 B118,23,Walking,2.00,0.00,24,University Students / Young Adults,0.00
-B119,7,School Bus,11.00,0.06,23,Children & Teenagers,15.18
-B120,12,Carpool,12.00,0.16,22,Children & Teenagers,42.24
-B121,20,Bicycle,4.00,0.00,24,University Students / Young Adults,0.00
-B122,25,Walking,3.00,0.00,21,University Students / Young Adults,0.00
-B123,9,School Bus,10.00,0.05,23,Children & Teenagers,11.50
-B124,18,Carpool,11.00,0.15,25,University Students / Young Adults,41.25
-B125,13,Bicycle,5.00,0.00,22,Children & Teenagers,0.00
 B126,17,Walking,2.00,0.00,24,Children & Teenagers,0.00
-B127,24,School Bus,12.00,0.06,23,University Students / Young Adults,16.56
-B128,21,Carpool,10.00,0.16,22,University Students / Young Adults,35.20
-B129,8,Bicycle,3.00,0.00,21,Children & Teenagers,0.00
 B130,14,Walking,2.00,0.00,23,Children & Teenagers,0.00
-B131,19,School Bus,11.00,0.07,24,University Students / Young Adults,18.48
-B132,25,Carpool,12.00,0.14,22,University Students / Young Adults,36.96
-B133,16,Bicycle,5.00,0.00,25,Children & Teenagers,0.00
-B134,20,Walking,3.00,0.00,22,University Students / Young Adults,0.00
-B135,7,School Bus,10.00,0.05,23,Children & Teenagers,11.50
-B136,18,Carpool,11.00,0.15,21,University Students / Young Adults,34.65
-B137,12,Bicycle,4.00,0.00,24,Children & Teenagers,0.00
-B138,23,Walking,3.00,0.00,22,University Students / Young Adults,0.00
-B139,6,School Bus,9.00,0.06,25,Children & Teenagers,13.50
-B140,15,Carpool,12.00,0.16,23,Children & Teenagers,44.16
-B141,14,Bicycle,5.00,0.00,22,Children & Teenagers,0.00
-B142,20,Carpool,10.00,0.15,23,University Students / Young Adults,34.50
 B143,6,Walking,2.00,0.00,20,Children & Teenagers,0.00
-B144,21,School Bus,9.00,0.05,24,University Students / Young Adults,10.80
-B145,17,Bicycle,6.00,0.00,23,Children & Teenagers,0.00
-B146,15,Walking,3.00,0.00,21,Children & Teenagers,0.00
-B147,24,School Bus,11.00,0.06,25,University Students / Young Adults,16.50
-B148,25,Carpool,12.00,0.16,22,University Students / Young Adults,42.24
-B149,8,Bicycle,4.00,0.00,24,Children & Teenagers,0.00
 B150,13,Walking,2.00,0.00,23,Children & Teenagers,0.00
-B151,22,School Bus,10.00,0.07,21,University Students / Young Adults,14.70
-B152,20,Carpool,11.00,0.14,22,University Students / Young Adults,33.88
-B153,14,Bicycle,5.00,0.00,24,Children & Teenagers,0.00
-B154,18,Walking,3.00,0.00,23,University Students / Young Adults,0.00
-B155,6,School Bus,9.00,0.05,25,Children & Teenagers,11.25
-B156,19,Carpool,10.00,0.15,22,University Students / Young Adults,33.00
-B157,16,Bicycle,5.00,0.00,21,Children & Teenagers,0.00
 B158,23,Walking,2.00,0.00,24,University Students / Young Adults,0.00
-B159,7,School Bus,11.00,0.06,23,Children & Teenagers,15.18
-B160,12,Carpool,12.00,0.16,22,Children & Teenagers,42.24
-B161,20,Bicycle,4.00,0.00,24,University Students / Young Adults,0.00
-B162,25,Walking,3.00,0.00,21,University Students / Young Adults,0.00
-B163,9,School Bus,10.00,0.05,23,Children & Teenagers,11.50
-B164,18,Carpool,11.00,0.15,25,University Students / Young Adults,41.25
-B165,13,Bicycle,5.00,0.00,22,Children & Teenagers,0.00
 B166,17,Walking,2.00,0.00,24,Children & Teenagers,0.00
-B167,24,School Bus,12.00,0.06,23,University Students / Young Adults,16.56
-B168,21,Carpool,10.00,0.16,22,University Students / Young Adults,35.20
-B169,8,Bicycle,3.00,0.00,21,Children & Teenagers,0.00
 B170,14,Walking,2.00,0.00,23,Children & Teenagers,0.00
-B171,19,School Bus,11.00,0.07,24,University Students / Young Adults,18.48
-B172,25,Carpool,12.00,0.14,22,University Students / Young Adults,36.96
-B173,16,Bicycle,5.00,0.00,25,Children & Teenagers,0.00
+B006,18,Walking,3.00,0.00,22,University Students / Young Adults,0.00
+B014,20,Walking,3.00,0.00,22,University Students / Young Adults,0.00
+B018,23,Walking,3.00,0.00,24,University Students / Young Adults,0.00
+B022,24,Walking,3.00,0.00,23,University Students / Young Adults,0.00
+B030,15,Walking,3.00,0.00,21,Children & Teenagers,0.00
+B038,16,Walking,3.00,0.00,22,Children & Teenagers,0.00
+B042,24,Walking,3.00,0.00,25,University Students / Young Adults,0.00
+B050,15,Walking,3.00,0.00,21,Children & Teenagers,0.00
+B054,24,Walking,3.00,0.00,23,University Students / Young Adults,0.00
+B066,15,Walking,3.00,0.00,21,Children & Teenagers,0.00
+B069,8,Bicycle,3.00,0.00,24,Children & Teenagers,0.00
+B074,18,Walking,3.00,0.00,23,University Students / Young Adults,0.00
+B082,25,Walking,3.00,0.00,21,University Students / Young Adults,0.00
+B089,8,Bicycle,3.00,0.00,21,Children & Teenagers,0.00
+B094,20,Walking,3.00,0.00,22,University Students / Young Adults,0.00
+B098,23,Walking,3.00,0.00,22,University Students / Young Adults,0.00
+B106,15,Walking,3.00,0.00,21,Children & Teenagers,0.00
+B114,18,Walking,3.00,0.00,23,University Students / Young Adults,0.00
+B122,25,Walking,3.00,0.00,21,University Students / Young Adults,0.00
+B129,8,Bicycle,3.00,0.00,21,Children & Teenagers,0.00
+B134,20,Walking,3.00,0.00,22,University Students / Young Adults,0.00
+B138,23,Walking,3.00,0.00,22,University Students / Young Adults,0.00
+B146,15,Walking,3.00,0.00,21,Children & Teenagers,0.00
+B154,18,Walking,3.00,0.00,23,University Students / Young Adults,0.00
+B162,25,Walking,3.00,0.00,21,University Students / Young Adults,0.00
+B169,8,Bicycle,3.00,0.00,21,Children & Teenagers,0.00
 B174,20,Walking,3.00,0.00,22,University Students / Young Adults,0.00
-B175,7,School Bus,10.00,0.05,23,Children & Teenagers,11.50
-B176,18,Carpool,11.00,0.15,21,University Students / Young Adults,34.65
-B177,12,Bicycle,4.00,0.00,24,Children & Teenagers,0.00
 B178,23,Walking,3.00,0.00,22,University Students / Young Adults,0.00
+B009,17,Bicycle,4.00,0.00,21,Children & Teenagers,0.00
+B029,17,Bicycle,4.00,0.00,22,Children & Teenagers,0.00
+B049,17,Bicycle,4.00,0.00,22,Children & Teenagers,0.00
+B061,12,Bicycle,4.00,0.00,22,Children & Teenagers,0.00
+B081,20,Bicycle,4.00,0.00,24,University Students / Young Adults,0.00
+B097,12,Bicycle,4.00,0.00,24,Children & Teenagers,0.00
+B109,8,Bicycle,4.00,0.00,24,Children & Teenagers,0.00
+B121,20,Bicycle,4.00,0.00,24,University Students / Young Adults,0.00
+B137,12,Bicycle,4.00,0.00,24,Children & Teenagers,0.00
+B149,8,Bicycle,4.00,0.00,24,Children & Teenagers,0.00
+B161,20,Bicycle,4.00,0.00,24,University Students / Young Adults,0.00
+B177,12,Bicycle,4.00,0.00,24,Children & Teenagers,0.00
+B001,16,Bicycle,5.00,0.00,21,Children & Teenagers,0.00
+B021,18,Bicycle,5.00,0.00,22,University Students / Young Adults,0.00
+B041,18,Bicycle,5.00,0.00,22,University Students / Young Adults,0.00
+B053,18,Bicycle,5.00,0.00,22,University Students / Young Adults,0.00
+B065,17,Bicycle,5.00,0.00,23,Children & Teenagers,0.00
+B077,16,Bicycle,5.00,0.00,21,Children & Teenagers,0.00
+B085,13,Bicycle,5.00,0.00,22,Children & Teenagers,0.00
+B093,16,Bicycle,5.00,0.00,25,Children & Teenagers,0.00
+B101,14,Bicycle,5.00,0.00,22,Children & Teenagers,0.00
+B113,14,Bicycle,5.00,0.00,24,Children & Teenagers,0.00
+B117,16,Bicycle,5.00,0.00,21,Children & Teenagers,0.00
+B125,13,Bicycle,5.00,0.00,22,Children & Teenagers,0.00
+B133,16,Bicycle,5.00,0.00,25,Children & Teenagers,0.00
+B141,14,Bicycle,5.00,0.00,22,Children & Teenagers,0.00
+B153,14,Bicycle,5.00,0.00,24,Children & Teenagers,0.00
+B157,16,Bicycle,5.00,0.00,21,Children & Teenagers,0.00
+B165,13,Bicycle,5.00,0.00,22,Children & Teenagers,0.00
+B173,16,Bicycle,5.00,0.00,25,Children & Teenagers,0.00
+B005,24,Bicycle,6.00,0.00,23,University Students / Young Adults,0.00
+B017,21,Bicycle,6.00,0.00,22,University Students / Young Adults,0.00
+B025,22,Bicycle,6.00,0.00,25,University Students / Young Adults,0.00
+B037,17,Bicycle,6.00,0.00,21,Children & Teenagers,0.00
+B045,21,Bicycle,6.00,0.00,23,University Students / Young Adults,0.00
+B057,20,Bicycle,6.00,0.00,22,University Students / Young Adults,0.00
+B073,14,Bicycle,6.00,0.00,24,Children & Teenagers,0.00
+B105,17,Bicycle,6.00,0.00,23,Children & Teenagers,0.00
+B145,17,Bicycle,6.00,0.00,23,Children & Teenagers,0.00
+B013,22,Bicycle,7.00,0.00,24,University Students / Young Adults,0.00
+B033,24,Bicycle,7.00,0.00,24,University Students / Young Adults,0.00
+B008,21,Carpool,8.00,0.16,25,University Students / Young Adults,32.00
+B011,24,School Bus,9.00,0.05,23,University Students / Young Adults,10.35
+B016,16,Carpool,9.00,0.13,25,Children & Teenagers,29.25
+B023,20,School Bus,9.00,0.05,21,University Students / Young Adults,9.45
+B039,22,School Bus,9.00,0.06,24,University Students / Young Adults,12.96
+B064,21,School Bus,9.00,0.05,24,University Students / Young Adults,10.80
+B075,6,School Bus,9.00,0.05,25,Children & Teenagers,11.25
+B099,6,School Bus,9.00,0.06,25,Children & Teenagers,13.50
+B104,21,School Bus,9.00,0.05,24,University Students / Young Adults,10.80
+B115,6,School Bus,9.00,0.05,25,Children & Teenagers,11.25
+B139,6,School Bus,9.00,0.06,25,Children & Teenagers,13.50
+B144,21,School Bus,9.00,0.05,24,University Students / Young Adults,10.80
+B155,6,School Bus,9.00,0.05,25,Children & Teenagers,11.25
+B003,22,School Bus,10.00,0.05,23,University Students / Young Adults,11.50
+B012,19,Carpool,10.00,0.14,20,University Students / Young Adults,28.00
+B019,19,School Bus,10.00,0.06,23,University Students / Young Adults,13.80
+B024,16,Carpool,10.00,0.16,24,Children & Teenagers,38.40
+B031,20,School Bus,10.00,0.07,23,University Students / Young Adults,16.10
+B036,21,Carpool,10.00,0.16,24,University Students / Young Adults,38.40
+B043,19,School Bus,10.00,0.05,21,University Students / Young Adults,10.50
+B048,20,Carpool,10.00,0.14,23,University Students / Young Adults,32.20
+B055,19,School Bus,10.00,0.06,24,University Students / Young Adults,14.40
+B060,21,Carpool,10.00,0.16,22,University Students / Young Adults,35.20
+B062,19,Carpool,10.00,0.15,23,University Students / Young Adults,34.50
+B071,22,School Bus,10.00,0.07,21,University Students / Young Adults,14.70
+B076,19,Carpool,10.00,0.15,22,University Students / Young Adults,33.00
+B083,9,School Bus,10.00,0.05,23,Children & Teenagers,11.50
+B088,21,Carpool,10.00,0.16,22,University Students / Young Adults,35.20
+B095,7,School Bus,10.00,0.05,23,Children & Teenagers,11.50
+B102,20,Carpool,10.00,0.15,23,University Students / Young Adults,34.50
+B111,22,School Bus,10.00,0.07,21,University Students / Young Adults,14.70
+B116,19,Carpool,10.00,0.15,22,University Students / Young Adults,33.00
+B123,9,School Bus,10.00,0.05,23,Children & Teenagers,11.50
+B128,21,Carpool,10.00,0.16,22,University Students / Young Adults,35.20
+B135,7,School Bus,10.00,0.05,23,Children & Teenagers,11.50
+B142,20,Carpool,10.00,0.15,23,University Students / Young Adults,34.50
+B151,22,School Bus,10.00,0.07,21,University Students / Young Adults,14.70
+B156,19,Carpool,10.00,0.15,22,University Students / Young Adults,33.00
+B163,9,School Bus,10.00,0.05,23,Children & Teenagers,11.50
+B168,21,Carpool,10.00,0.16,22,University Students / Young Adults,35.20
+B175,7,School Bus,10.00,0.05,23,Children & Teenagers,11.50
+B007,23,School Bus,11.00,0.06,24,University Students / Young Adults,15.84
+B020,17,Carpool,11.00,0.15,21,Children & Teenagers,34.65
+B027,23,School Bus,11.00,0.06,24,University Students / Young Adults,15.84
+B032,18,Carpool,11.00,0.14,25,University Students / Young Adults,38.50
+B040,20,Carpool,11.00,0.15,23,University Students / Young Adults,37.95
+B047,22,School Bus,11.00,0.07,24,University Students / Young Adults,18.48
+B052,21,Carpool,11.00,0.16,24,University Students / Young Adults,42.24
+B059,23,School Bus,11.00,0.05,24,University Students / Young Adults,13.20
+B067,24,School Bus,11.00,0.06,25,University Students / Young Adults,16.50
+B072,20,Carpool,11.00,0.14,22,University Students / Young Adults,33.88
+B079,7,School Bus,11.00,0.06,23,Children & Teenagers,15.18
+B084,18,Carpool,11.00,0.15,25,University Students / Young Adults,41.25
+B091,19,School Bus,11.00,0.07,24,University Students / Young Adults,18.48
+B096,18,Carpool,11.00,0.15,21,University Students / Young Adults,34.65
+B107,24,School Bus,11.00,0.06,25,University Students / Young Adults,16.50
+B112,20,Carpool,11.00,0.14,22,University Students / Young Adults,33.88
+B119,7,School Bus,11.00,0.06,23,Children & Teenagers,15.18
+B124,18,Carpool,11.00,0.15,25,University Students / Young Adults,41.25
+B131,19,School Bus,11.00,0.07,24,University Students / Young Adults,18.48
+B136,18,Carpool,11.00,0.15,21,University Students / Young Adults,34.65
+B147,24,School Bus,11.00,0.06,25,University Students / Young Adults,16.50
+B152,20,Carpool,11.00,0.14,22,University Students / Young Adults,33.88
+B159,7,School Bus,11.00,0.06,23,Children & Teenagers,15.18
+B164,18,Carpool,11.00,0.15,25,University Students / Young Adults,41.25
+B171,19,School Bus,11.00,0.07,24,University Students / Young Adults,18.48
+B176,18,Carpool,11.00,0.15,21,University Students / Young Adults,34.65
+B004,19,Carpool,12.00,0.15,21,University Students / Young Adults,37.80
+B015,18,School Bus,12.00,0.07,23,University Students / Young Adults,19.32
+B028,21,Carpool,12.00,0.15,23,University Students / Young Adults,41.40
+B035,23,School Bus,12.00,0.05,23,University Students / Young Adults,13.80
+B044,23,Carpool,12.00,0.16,24,University Students / Young Adults,46.08
+B051,23,School Bus,12.00,0.05,25,University Students / Young Adults,15.00
+B056,22,Carpool,12.00,0.15,21,University Students / Young Adults,37.80
+B068,25,Carpool,12.00,0.16,22,University Students / Young Adults,42.24
+B080,12,Carpool,12.00,0.16,22,Children & Teenagers,42.24
+B087,24,School Bus,12.00,0.06,23,University Students / Young Adults,16.56
+B092,25,Carpool,12.00,0.14,22,University Students / Young Adults,36.96
+B100,15,Carpool,12.00,0.16,23,Children & Teenagers,44.16
+B108,25,Carpool,12.00,0.16,22,University Students / Young Adults,42.24
+B120,12,Carpool,12.00,0.16,22,Children & Teenagers,42.24
+B127,24,School Bus,12.00,0.06,23,University Students / Young Adults,16.56
+B132,25,Carpool,12.00,0.14,22,University Students / Young Adults,36.96
+B140,15,Carpool,12.00,0.16,23,Children & Teenagers,44.16
+B148,25,Carpool,12.00,0.16,22,University Students / Young Adults,42.24
+B160,12,Carpool,12.00,0.16,22,Children & Teenagers,42.24
+B167,24,School Bus,12.00,0.06,23,University Students / Young Adults,16.56
+B172,25,Carpool,12.00,0.14,22,University Students / Young Adults,36.96

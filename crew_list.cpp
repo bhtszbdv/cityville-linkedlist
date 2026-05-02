@@ -40,19 +40,19 @@ static const char* SUB_BORDER  =
 
 // ── output helpers ────────────────────────────────────────────────────────
 static string fit(const string& s, int w) {
-    if ((int)s.size() <= w) return s;
+    if ((int)s.size() <= w) return s;       //Shortens text if it exceeds column width.
     return s.substr(0, w - 1) + "~";
 }
 
 static string fmtD(double v, int prec) {
     ostringstream oss;
-    oss << fixed << setprecision(prec) << v;
+    oss << fixed << setprecision(prec) << v;     //Formats decimal numbers.
     return oss.str();
 }
 
 static void statRow(const string& lbl, const string& val) {
     cout << "| " << left << setw(20) << fit(lbl, 20)
-         << " | " << left << setw(55) << fit(val, 55) << " |\n";
+         << " | " << left << setw(55) << fit(val, 55) << " |\n";    //Aligns text and pads with spaces to create clean columns.
 }
 
 static void printSearchStats(const string& algo, double us,
@@ -60,13 +60,13 @@ static void printSearchStats(const string& algo, double us,
                              int found, int total) {
     struct PlainRes { string a; int b; string c; double d, e; int f; string g; double h; };
     struct LLNode   { PlainRes data; void* next; };
-    long long llSz  = (long long)sizeof(LLNode);
-    long long arrSz = (long long)sizeof(PlainRes);
+    long long llSz  = (long long)sizeof(LLNode);     //calculates the size of each node in bytes.
+    long long arrSz = (long long)sizeof(PlainRes);  
     string mem = to_string(total) + " nodes x " + to_string(llSz)
                + " B = ~" + to_string((long long)total * llSz)
                + " B  (arr ~" + to_string((long long)total * arrSz) + " B)";
     cout << "\n" << STAT_BORDER << "\n";
-    statRow("Algorithm",        algo);
+    statRow("Algorithm",        algo);   
     statRow("Time",             fmtD(us, 2) + " microseconds");
     statRow("Time Complexity",  tc);
     statRow("Space Complexity", sc);
@@ -98,9 +98,9 @@ static void srchRow(const Node* n) {
 
 // ── constructor / destructor ──────────────────────────────────────────────
 LinkedList::LinkedList() : head(nullptr), count(0) {}
-LinkedList::~LinkedList() { clear(); }
+LinkedList::~LinkedList() { clear(); }        //calling the destructor clears any nodes that still exist when the LinkedList object is destroyed.
 
-void LinkedList::clear() {
+void LinkedList::clear() {          //to free the memory
     Node* cur = head;
     while (cur) {
         Node* tmp = cur->next;
@@ -111,22 +111,13 @@ void LinkedList::clear() {
     count = 0;
 }
 
-bool LinkedList::idExists(const string& id) const {
-    Node* cur = head;
-    while (cur) {
-        if (cur->residentID == id) return true;
-        cur = cur->next;
-    }
-    return false;
-}
-
-// ── insert / delete / reverse ─────────────────────────────────────────────
+// ── reverse ───────────────────────────────────────────────────────────────
 void LinkedList::reverse() {
     if (!head || !head->next) {
         cout << "  List has fewer than 2 nodes - nothing to reverse.\n";
         return;
     }
-    Node* prev = nullptr;
+    Node* prev = nullptr;  //prev nodes
     Node* cur  = head;
     while (cur) {
         Node* nxt  = cur->next;
@@ -148,7 +139,7 @@ bool LinkedList::loadFromCSV(const string& filename) {
     }
 
     string line;
-    getline(file, csvHeader);
+    getline(file, csvHeader); // read and store header
 
     int loaded = 0;
     while (getline(file, line)) {
@@ -186,11 +177,8 @@ bool LinkedList::loadFromCSV(const string& filename) {
                 char cityPfx = (!id.empty()) ? (char)toupper(id[0]) : '\0';
                 ageGroup = ageGroupLabel(age, cityPfx);
             }
-            if (idExists(id)) {
-                cout << "  [ERROR] Resident ID \"" << id << "\" already exists. Skipping.\n";
-                continue;
-            }
-            Node* newNode = new Node();
+
+            Node* newNode = new Node();     
             newNode->residentID     = id;
             newNode->age            = age;
             newNode->mode           = mode;
@@ -234,14 +222,15 @@ bool LinkedList::saveToCSV() const {
         file << cur->residentID     << ","
              << cur->age            << ","
              << cur->mode           << ","
-             << cur->distance       << ","
-             << cur->emissionFactor << ","
+             << fixed << setprecision(2) << cur->distance       << ","
+             << fixed << setprecision(2) << cur->emissionFactor << ","
              << cur->days           << ","
              << cur->ageGroup       << ","
-             << fixed << setprecision(2) << cur->totalEmission << "\n";
+             << fixed << setprecision(2) << cur->totalEmission  << "\n";
         cur = cur->next;
     }
     file.close();
+    cout << "  Saved " << count << " records to " << sourceFilename << "\n";
     return true;
 }
 
@@ -286,7 +275,7 @@ void LinkedList::swapData(Node* a, Node* b) {
     swap(a->residentID,     b->residentID);
     swap(a->age,            b->age);
     swap(a->mode,           b->mode);
-    swap(a->distance,       b->distance);
+    swap(a->distance,       b->distance);            //swaps data between two nodes without moving the nodes themselves.
     swap(a->emissionFactor, b->emissionFactor);
     swap(a->days,           b->days);
     swap(a->ageGroup,       b->ageGroup);
@@ -701,7 +690,7 @@ void LinkedList::totalEmissionsReport(char city) const {
 
     struct ModeData { string mode; double emission; int count; };
     ModeData modes[100];
-    int modeCount_arr = 0;
+    int modeCount_arr = 0;     
     double total = 0.0;
 
     Node* cur = head;
@@ -1014,7 +1003,7 @@ void LinkedList::topBottomEmitters(int n) const {
              << setw(6)  << "ID"    << " | "
              << setw(5)  << "Age"   << " | "
              << setw(35) << "Age Group" << " | "
-             << setw(12) << "Mode"  << " | "
+             << setw(12) << "Mode"  << " | "  
              << setw(15) << "Total Emis(kg)" << " |\n";
         cout << RANK_BORDER << "\n";
         if (asc) {

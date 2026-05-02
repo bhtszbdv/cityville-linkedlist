@@ -6,9 +6,9 @@
 class LinkedList {
 private:
     Node* head;    // start of the list
-    int   count; // total nodes
-    std::string sourceFilename;    // so we know where to save back
-    std::string csvHeader;      // keep the original header line
+    int   count;   // total nodes
+    std::string sourceFilename;   // path of the file loaded from
+    std::string csvHeader;        // original header line
     double lastSortUs = 0.0;   // elapsed time from the last sort call
 
 public:
@@ -16,17 +16,15 @@ public:
     LinkedList();
     ~LinkedList();
 
-       // reverse the whole list
-    void reverse();
-
     void display() const;
     int    size()        const { return count; }
     double sortTime()    const { return lastSortUs; }  // microseconds from last sort
     void clear();
+    void reverse();
 
-     // load from csv file
+    // load from csv file
     bool loadFromCSV(const std::string& filename);
-          // write current list back to csv
+    // write current list back to csv
     bool saveToCSV() const;
 
           // bubble sort - O(n^2)
@@ -70,6 +68,4 @@ public:
 private:
             // swap node       data without moving pointers
     static void swapData(Node* a, Node* b);
-     // check if id already in list
-    bool idExists(const std::string& id) const;
 };
