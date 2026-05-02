@@ -31,14 +31,11 @@ int           cityCArr_size = 0;
 // Stats box: Label(20) | Value(55)
 static const char* STAT_BD =
     "+----------------------+---------------------------------------------------------+";
-// Array/search table: ID(6) Age(4) Group(35) Mode(12) Dist(9) Total(14)
-static const char* CARY_BD =
-    "+--------+------+-------------------------------------+--------------+-----------+----------------+";
+//   Comparison table - by   Ahmad   
+
 // Menu box top/divider (52 chars between +)
 static const char* MNU_HDR = "+====================================================+";
 static const char* MNU_MID = "+----------------------------------------------------+";
-//   Comparison table - by   Ahmad   
-//    (yeah, Ahmad wrote this part; notes are a bit messy)
 
 static const char* CMP_BD =
     "+--------------+----------+--------------+--------------+--------------+";
@@ -72,46 +69,9 @@ static void mc_printSortStats(const string& algo, double us,
     mc_statRow("Memory Usage",     mem);
     cout << STAT_BD << "\n";
 }
-// bordered stats box for an array search operation
-static void mc_printArraySearchStats(const string& label, double us,
-                                      int found, int total) {
-    long long sz  = (long long)sizeof(CityCResident);
-    string mem = to_string(total) + " x " + to_string(sz)
-               + " B = ~" + to_string((long long)total * sz) + " B (array)";
-    cout << "\n" << STAT_BD << "\n";
-    mc_statRow("Algorithm",        label);
-    mc_statRow("Time",             mc_fmtD(us, 4) + " microseconds");
-    mc_statRow("Time Complexity",  "O(n)");
-    mc_statRow("Space Complexity", "O(1)");
-    mc_statRow("Records Found",    to_string(found) + " / " + to_string(total));
-    mc_statRow("Memory (Array)",   mem);
-    cout << STAT_BD << "\n";
-}
 // one menu content line, left-justified, 50-char wide
 static void menuLine(const string& s = "") {
     cout << "| " << left << setw(50) << mc_fit(s, 50) << " |\n";
-}
-
-// ── City C array display helpers ──────────────────────────────────────────
-static void caryHeader() {
-    cout << CARY_BD << "\n";
-    cout << "| " << left
-         << setw(6)  << "ID"        << " | "
-         << setw(4)  << "Age"       << " | "
-         << setw(35) << "Age Group" << " | "
-         << setw(12) << "Mode"      << " | "
-         << setw(9)  << "Dist(km)"  << " | "
-         << setw(14) << "Total(kg)" << " |\n";
-    cout << CARY_BD << "\n";
-}
-static void caryRow(const CityCResident& r) {
-    cout << "| " << left
-         << setw(6)  << mc_fit(r.residentID, 6)   << " | "
-         << right    << setw(4) << r.age            << " | "
-         << left     << setw(35) << mc_fit(r.ageGroup, 35) << " | "
-         << setw(12) << mc_fit(r.mode, 12)          << " | "
-         << right    << setw(9)  << fixed << setprecision(1) << r.distance      << " | "
-         << right    << setw(14) << fixed << setprecision(2) << r.totalEmission << " |\n";
 }
 
 // ── City C array load ─────────────────────────────────────────────────────
@@ -159,16 +119,6 @@ void loadCityCArray(const string& filename) {
     file.close();
 }
 
-// display City C array as a bordered table
-void displayCityCArray() {
-    if (cityCArr_size == 0) { cout << "  (array is empty)\n"; return; }
-    cout << "\n";
-    caryHeader();
-    for (int i = 0; i < cityCArr_size; i++) caryRow(cityCArr[i]);
-    cout << CARY_BD << "\n";
-    cout << "  Total records: " << cityCArr_size << "\n";
-}
-
 // bubble sort on a copy of the City C array (does not modify the original)
 double bubbleSortCityCArr(int field) {
     CityCResident tmp[MAX_CITY_C_ARR];
@@ -186,43 +136,6 @@ double bubbleSortCityCArr(int field) {
     }
     auto end = chrono::high_resolution_clock::now();
     return chrono::duration<double, micro>(end - start).count();
-}
-
-// linear search on City C array by mode
-void linearSearchCityCArr_mode(const string& mode) {
-    string modeLow = mode;
-    for (char& c : modeLow) c = (char)tolower(c);
-
-    cout << "\n";
-    caryHeader();
-    auto start = chrono::high_resolution_clock::now();
-    int found = 0;
-    for (int i = 0; i < cityCArr_size; i++) {
-        string cur = cityCArr[i].mode;
-        for (char& c : cur) c = (char)tolower(c);
-        if (cur == modeLow) { caryRow(cityCArr[i]); found++; }
-    }
-    auto end = chrono::high_resolution_clock::now();
-    double us = chrono::duration<double, micro>(end - start).count();
-    cout << CARY_BD << "\n";
-    mc_printArraySearchStats("Linear Search (Array) by Mode", us, found, cityCArr_size);
-}
-
-// linear search on City C array by age range
-void linearSearchCityCArr_age(int minAge, int maxAge) {
-    cout << "\n";
-    caryHeader();
-    auto start = chrono::high_resolution_clock::now();
-    int found = 0;
-    for (int i = 0; i < cityCArr_size; i++) {
-        if (cityCArr[i].age >= minAge && cityCArr[i].age <= maxAge) {
-            caryRow(cityCArr[i]); found++;
-        }
-    }
-    auto end = chrono::high_resolution_clock::now();
-    double us = chrono::duration<double, micro>(end - start).count();
-    cout << CARY_BD << "\n";
-    mc_printArraySearchStats("Linear Search (Array) by Age", us, found, cityCArr_size);
 }
 
 // compare City C array vs linked list
@@ -261,8 +174,8 @@ void compareArrayVsLinkedListCityC(const LinkedList& cityC) {
     auto t2 = chrono::high_resolution_clock::now();
     cityC.carbonAnalysis();
     auto t3 = chrono::high_resolution_clock::now();
-    long long arrUs = chrono::duration_cast<chrono::microseconds>(t2 - t1).count();
-    long long llUs  = chrono::duration_cast<chrono::microseconds>(t3 - t2).count();
+    long long arrUs = chrono::duration_cast<chrono::microseconds>(t2 - t1).count();  //array traversal time
+    long long llUs  = chrono::duration_cast<chrono::microseconds>(t3 - t2).count();  //linked list traversal time
 
     cout << "\n" << STAT_BD << "\n";
     mc_statRow("Section",         "Traversal Time (sum emissions)");
@@ -360,7 +273,7 @@ int getValidIntInput(const string& prompt) {
         cout << prompt;
         if (cin >> value) {
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            return value;
+            return value;             //validations
         } else {
             cout << "  [ERROR] Invalid input. Please enter numbers only.\n";
             cin.clear();
@@ -373,7 +286,7 @@ int getValidIntInput(const string& prompt) {
 double getValidDoubleInput(const string& prompt) {
     double value;
     while (true) {
-        cout << prompt;
+        cout << prompt;                        //validations
         if (cin >> value) {
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             return value;
@@ -383,36 +296,6 @@ double getValidDoubleInput(const string& prompt) {
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
         }
     }
-}
-
-// collects all info for a new resident from the user
-void collectResidentData(char cityPrefix, string& id, int& age, string& mode,
-                         double& dist, double& emFactor, int& days,
-                         string& ageGroup, double& totalEmission) {
-    while (true) {
-        cout << "  Resident ID            : "; getline(cin, id);
-        size_t s = id.find_first_not_of(" \t\r\n");
-        size_t e = id.find_last_not_of(" \t\r\n");
-        if (s == string::npos) { cout << "  [ERROR] ID cannot be empty.\n"; continue; }
-        id = id.substr(s, e - s + 1);
-        if (id.length() != 4 ||
-            toupper(id[0]) != cityPrefix ||
-            !isdigit(id[1]) || !isdigit(id[2]) || !isdigit(id[3])) {
-            cout << "  [ERROR] Invalid ID format. It must be '" << cityPrefix
-                 << "' followed by exactly 3 numbers (e.g. " << cityPrefix << "001).\n";
-            continue;
-        }
-        id[0] = toupper(id[0]);
-        break;
-    }
-    age      = getValidIntInput("  Age                    : ");
-    ageGroup = LinkedList::ageGroupLabel(age, cityPrefix);
-    cout << "  Age Group (auto)       : " << ageGroup << "\n";
-    mode         = getValidMode(cityPrefix);
-    dist         = getValidDoubleInput("  Daily Distance (km)    : ");
-    emFactor     = getValidDoubleInput("  Emission Factor (kg/km): ");
-    days         = getValidIntInput("  Days per Month         : ");
-    totalEmission = dist * emFactor * days;
 }
 
 // sort menu for city A and B
@@ -451,24 +334,40 @@ void sortMenuAB(LinkedList& city) {
     mc_printSortStats(algoName + " by " + fieldName, city.sortTime(), tc, sc, city.size());
 }
 
-// sort menu for city C - bubble sort only
+// sort menu for city C
 void sortMenu(LinkedList& city) {
+    cout << "\n  Select Algorithm:\n";
+    cout << "  [1] Bubble Sort\n";
+    cout << "  [2] Insertion Sort\n";
+    cout << "  [0] Back\n";
+    int algo = getValidIntInput("  Your choice: ");
+    if (algo == 0) { cout << "  Returning to city menu.\n"; return; }
+    if (algo < 1 || algo > 2) { cout << "  Invalid choice.\n"; return; }
+
     cout << "\n  Sort by:\n";
     cout << "  [1] Age\n";
     cout << "  [2] Daily Distance\n";
     cout << "  [3] Total Carbon Emission\n";
-    int choice = getValidIntInput("  Enter choice: ");
+    cout << "  [0] Back\n";
+    int field = getValidIntInput("  Your choice: ");
+    if (field == 0) { cout << "  Returning to city menu.\n"; return; }
 
-    string fieldName;
-    switch (choice) {
-        case 1: city.sortByAge();      fieldName = "Age";            break;
-        case 2: city.sortByDistance(); fieldName = "Daily Distance"; break;
-        case 3: city.sortByEmission(); fieldName = "Total Emission"; break;
-        default: cout << "  Invalid choice.\n"; return;
+    string algoName, fieldName, tc, sc;
+    if (algo == 1) {
+        algoName = "Bubble Sort"; tc = "O(n^2)"; sc = "O(1)";
+        if      (field == 1) { city.sortByAge();      fieldName = "Age"; }
+        else if (field == 2) { city.sortByDistance(); fieldName = "Daily Distance"; }
+        else if (field == 3) { city.sortByEmission(); fieldName = "Total Carbon Emission"; }
+        else { cout << "  Invalid field.\n"; return; }
+    } else {
+        algoName = "Insertion Sort"; tc = "O(n^2) worst / O(n) best"; sc = "O(1)";
+        if      (field == 1) { city.insertionSortByAge();      fieldName = "Age"; }
+        else if (field == 2) { city.insertionSortByDistance(); fieldName = "Daily Distance"; }
+        else if (field == 3) { city.insertionSortByEmission(); fieldName = "Total Carbon Emission"; }
+        else { cout << "  Invalid field.\n"; return; }
     }
     city.display();
-    mc_printSortStats("Bubble Sort by " + fieldName, city.sortTime(),
-                      "O(n^2)", "O(1)", city.size());
+    mc_printSortStats(algoName + " by " + fieldName, city.sortTime(), tc, sc, city.size());
 }
 
 // search menu for city A and B
@@ -586,15 +485,9 @@ void cityAMenu(LinkedList& cityA) {
     do {
         printCityMenu("A");
         int choice = getValidIntInput("  Your choice (0-11): ");
-
-        string id, mode, ageGroup;
-        int age, days, pos, oldSize;
-        double dist, emFactor, totalEmission;
-
         switch (choice) {
             case 1:
                 cityA.display();
-                cityA.saveToCSV();
                 break;
             case 2:
                 cityA.sortByResidentID();
@@ -646,15 +539,9 @@ void cityBMenu(LinkedList& cityB) {
     do {
         printCityMenu("B");
         int choice = getValidIntInput("  Your choice (0-11): ");
-
-        string id, mode, ageGroup;
-        int age, days, pos, oldSize;
-        double dist, emFactor, totalEmission;
-
         switch (choice) {
             case 1:
                 cityB.display();
-                cityB.saveToCSV();
                 break;
             case 2:
                 cityB.sortByResidentID();
@@ -730,15 +617,9 @@ void cityCMenu(LinkedList& cityC) {
     do {
         printCityMenu("C");
         int choice = getValidIntInput("  Your choice (0-9): ");
-
-        string id, mode, ageGroup;
-        int age, days, pos, oldSize;
-        double dist, emFactor, totalEmission;
-
         switch (choice) {
             case 1:
                 cityC.display();
-                cityC.saveToCSV();
                 break;
             case 2:
                 cityC.sortByResidentID();
@@ -826,7 +707,7 @@ void compareCities(const LinkedList& cityA, const LinkedList& cityB, const Linke
     cout << "\n" << STAT_BD << "\n";
     mc_statRow("Section",          "Traversal Time (sum emissions)");
     mc_statRow("City A traversal",
-               to_string(chrono::duration_cast<chrono::microseconds>(t2-t1).count()) + " us");
+               to_string(chrono::duration_cast<chrono::microseconds>(t2-t1).count()) + " us");  // shows the time it takes to run through each city
     mc_statRow("City B traversal",
                to_string(chrono::duration_cast<chrono::microseconds>(t3-t2).count()) + " us");
     mc_statRow("City C traversal",

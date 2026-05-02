@@ -1,5 +1,5 @@
 ResidentID,Age,ModeOfTransport,DailyDistance,CarbonEmissionFactor, AverageDayPerMonth, AgeGroup, TotalMonthlyEmission
-B001,16,Bicycle,5,0,21,Children & Teenagers,0.00
+B001,16,Bicycle,5.00,0.00,21,Children & Teenagers,0.00
 B002,20,Walking,2.00,0.00,20,University Students / Young Adults,0.00
 B003,22,School Bus,10.00,0.05,23,University Students / Young Adults,11.50
 B004,19,Carpool,12.00,0.15,21,University Students / Young Adults,37.80
